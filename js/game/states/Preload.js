@@ -14,7 +14,10 @@ Olympus.Preload.prototype = {
 
         this.load.image('background', 'assets/images/test_level.jpg');
 
+
         this.load.spritesheet('hero', 'assets/images/hero_spritesheet.png', 199, 285);
+        this.load.spritesheet('enemy', 'assets/images/villain_spritesheet.png', 199, 285);
+
 
 
         this.preloadBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'preloadbar');

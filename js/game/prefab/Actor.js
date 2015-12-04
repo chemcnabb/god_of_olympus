@@ -16,6 +16,8 @@ var Actor = function(game, x, y, sprite) {
 
 
     this.game.physics.arcade.enableBody(this);
+    this.body.setSize(this.width, 15, 0, 0);
+
 };
 
 Actor.prototype = Object.create(Phaser.Sprite.prototype);

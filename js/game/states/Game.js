@@ -17,6 +17,10 @@ Olympus.Game = function (game) {
 };
 
 Olympus.Game.prototype = {
+    init: function(params){
+        console.log("game state initted");
+        this.params = params;
+    },
     create: function () {
 
 
@@ -55,9 +59,18 @@ Olympus.Game.prototype = {
         // create score text
         this.scoreText = this.game.add.bitmapText(10,10, 'Diogenes', 'Score: ' + this.score, 24);
 
+        if(this.params != undefined){
+            this.player = new Hero(this.game, this.params.playerX, this.params.playerY);
+        }else{
+            this.player = new Hero(this.game, this.game.world.width/2+100, this.game.world.height/2);
+            this.enemy = new Enemy(this.game, this.game.world.width/2-100, this.game.world.height/2+190);
+            this.game.add.existing(this.enemy);
+        }
+        //this.player = new Hero(this.game, this.game.world.width/2+100, this.game.world.height/2);
+        //this.enemy = new Enemy(this.game, this.game.world.width/2-100, this.game.world.height/2+190);
 
-        this.player = new Hero(this.game, this.game.world.width/2+100, this.game.world.height/2);
         this.game.add.existing(this.player);
+
         //this.player = this.add.sprite(this.game.world.width/2+100, this.game.world.height/2, 'hero');
         //this.player.frame = 0;
         //this.player.anchor.setTo(0.5);
@@ -108,16 +121,21 @@ Olympus.Game.prototype = {
     },
     update: function () {
         this.player.move();
-        //console.log(this.player.direction);
+        if(this.game.physics.arcade.collide(this.player, this.enemy)){
+            //TODO: create globals for player position,
+            // pass parameters to Battle state (StateManager)
+            // pass parameters back to this state, passed to teh state init function
+            this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y});
+        }
     },
     shutdown: function() {
         console.log('shutting down');
-        this.coins.destroy();
-        this.enemies.destroy();
-        this.scoreboard.destroy();
-        this.score = 0;
-        this.coinGenerator.timer.destroy();
-        this.enemyGenerator.timer.destroy();
+        //this.coins.destroy();
+        //this.enemies.destroy();
+        //this.scoreboard.destroy();
+        //this.score = 0;
+        //this.coinGenerator.timer.destroy();
+        //this.enemyGenerator.timer.destroy();
     },
     generateEnemy: function() {
         var enemy = this.enemies.getFirstExists(false);
