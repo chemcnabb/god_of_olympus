@@ -12,7 +12,31 @@ Olympus.Preload.prototype = {
         this.splash.anchor.setTo(0.5, 0.5);
         this.splash.height = window.innerHeight;
 
-        this.load.image('background', 'assets/images/test_level.jpg');
+
+
+
+
+        //  The final one tells Phaser the foramt of the map data, in this case it's a JSON file exported from the Tiled map editor.
+        //  This could be Phaser.Tilemap.CSV too.
+
+        this.game.load.tilemap('world', 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
+
+        //  Next we load the tileset. This is just an image, loaded in via the normal way we load images:
+
+        this.game.load.image('water', 'assets/images/world_map_tiles/water.png');
+
+
+        this.game.load.image('ground', 'assets/images/world_map_tiles/ground.png');
+
+
+
+
+
+
+
+
+
+        //this.load.image('background', 'assets/images/test_level.jpg');
 
 
         this.load.spritesheet('hero', 'assets/images/hero_spritesheet.png', 199, 285);

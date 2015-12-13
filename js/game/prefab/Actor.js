@@ -6,7 +6,7 @@ var Actor = function(game, x, y, sprite) {
 
     this.frame = 0;
     this.anchor.setTo(0.5);
-    this.scale.setTo(this.y*0.0012);
+    this.scale.setTo((this.height/2)*0.0012);
     this.animations.add('left', [2], 1, true);
     this.animations.add('right', [1], 1, true);
     this.animations.add('up', [3], 1, true);
@@ -14,9 +14,14 @@ var Actor = function(game, x, y, sprite) {
     this.alive = true;
 
 
+    this.battleX = 200;
+    this.battleY = 200;
+    this.battleDirection = "left";
 
     this.game.physics.arcade.enableBody(this);
     this.body.setSize(this.width, 15, 0, 0);
+
+
 
 };
 
@@ -25,18 +30,18 @@ Actor.prototype = Object.create(Phaser.Sprite.prototype);
 Actor.prototype.update = function(){
     this.body.velocity.y = 0;
     this.body.velocity.x = 0;
-
+    this.animations.play(this.direction);
     if(this.alive && this.is_moving == true) {
         //player movement
-        this.animations.play(this.direction);
+
 
         if(this.direction == "up") {
             this.body.velocity.y -= 75;
-            this.scale.setTo(this.y*0.0012)
+            //this.scale.setTo(this.y*0.0012)
         }
         if(this.direction == "down") {
             this.body.velocity.y += 75;
-            this.scale.setTo(this.y*0.0012);
+            //this.scale.setTo(this.y*0.0012);
         }
         if(this.direction == "left") {
             this.body.velocity.x -= 125;
