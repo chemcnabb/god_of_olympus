@@ -2022,7 +2022,9 @@ module.exports = {
 
                 layer.bodies.push(body);
             }
+            return layer.bodies;
         }
+
     },
 
     ninja: {
@@ -3123,18 +3125,22 @@ module.exports = Tilelayer;
 
 Tilelayer.prototype.setupRenderArea = function () {
     // calculate the X/Y start of the render area as the tile location of the top-left of the camera view.
-    this._renderArea.x = this.game.math.clampBottom(this.game.math.floor(this._scroll.x / this.map.scaledTileWidth), 0);
-    this._renderArea.y = this.game.math.clampBottom(this.game.math.floor(this._scroll.y / this.map.scaledTileHeight), 0);
+    //this._renderArea.x = this.game.math.clampBottom(this.game.math.floor(this._scroll.x / this.map.scaledTileWidth), 0);
+    //this._renderArea.y = this.game.math.clampBottom(this.game.math.floor(this._scroll.y / this.map.scaledTileHeight), 0);
+    this._renderArea.x = this.game.math.clampBottom(this.game.math.floorTo(this._scroll.x / this.map.scaledTileWidth), 0);
+    this._renderArea.y = this.game.math.clampBottom(this.game.math.floorTo(this._scroll.y / this.map.scaledTileHeight), 0);
 
     // the width of the render area is the camera view width in tiles
-    this._renderArea.width = this.game.math.ceil(this.game.camera.view.width / this.map.scaledTileWidth);
+    //this._renderArea.width = this.game.math.ceil(this.game.camera.view.width / this.map.scaledTileWidth);
+    this._renderArea.width = this.game.math.ceilTo(this.game.camera.view.width / this.map.scaledTileWidth);
 
     // ensure we don't go outside the map width
     this._renderArea.width = (this._renderArea.x + this._renderArea.width > this.map.size.x) ?
         (this.map.size.x - this._renderArea.x) : this._renderArea.width;
 
     // the height of the render area is the camera view height in tiles
-    this._renderArea.height = this.game.math.ceil(this.game.camera.view.height / this.map.scaledTileHeight);
+    //this._renderArea.height = this.game.math.ceil(this.game.camera.view.height / this.map.scaledTileHeight);
+    this._renderArea.height = this.game.math.ceilTo(this.game.camera.view.height / this.map.scaledTileHeight);
 
     // ensure we don't go outside the map height
     this._renderArea.height = (this._renderArea.y + this._renderArea.height > this.map.size.y) ?
@@ -5051,9 +5057,10 @@ var utils = require('../utils');
  */
 //TODO: Support external tilesets (TSX files) via the "source" attribute
 //see: https://github.com/bjorn/tiled/wiki/TMX-Map-Format#tileset
-function Tileset(game, key, settings) {
+function Tileset(game, key, settings) {//tx = PIXI.BaseTextureCache[txkey],
     var txkey = utils.cacheKey(key, 'tileset', settings.name),
-        tx = PIXI.BaseTextureCache[txkey],
+
+        tx = game.cache.getPixiBaseTexture(txkey),
         ids,
         ttxkey,
         ttx,
@@ -5071,7 +5078,8 @@ function Tileset(game, key, settings) {
                 tileTextures = tileTextures || [];
 
                 ttxkey = utils.cacheKey(key, 'tileset_image_' + ids[i], settings.name);
-                ttx = PIXI.TextureCache[ttxkey];
+                //ttx = PIXI.TextureCache[ttxkey];
+                ttx = game.cache.getPixiTexture(ttxkey);
 
                 if (!ttx) {
                     console.warn(
@@ -5173,8 +5181,11 @@ function Tileset(game, key, settings) {
      * @type Vector
      */
     this.numTiles = this.multiImage ? tileTextures.length : new Phaser.Point(
-        Phaser.Math.floor((this.baseTexture.width - this.margin) / (this.tileWidth - this.spacing)),
-        Phaser.Math.floor((this.baseTexture.height - this.margin) / (this.tileHeight - this.spacing))
+        //Phaser.Math.floor((this.baseTexture.width - this.margin) / (this.tileWidth - this.spacing)),
+        //Phaser.Math.floor((this.baseTexture.height - this.margin) / (this.tileHeight - this.spacing))
+
+        Phaser.Math.floorTo((this.baseTexture.width - this.margin) / (this.tileWidth - this.spacing)),
+        Phaser.Math.floorTo((this.baseTexture.height - this.margin) / (this.tileHeight - this.spacing))
     );
 
     /**
@@ -5229,7 +5240,8 @@ function Tileset(game, key, settings) {
     if (!this.multiImage) {
         for(var t = 0, tl = this.lastgid - this.firstgid + 1; t < tl; ++t) {
             // convert the tileId to x,y coords of the tile in the Texture
-            var y = Phaser.Math.floor(t / this.numTiles.x),
+            //var y = Phaser.Math.floor(t / this.numTiles.x),
+            var y = Phaser.Math.floorTo(t / this.numTiles.x),
                 x = (t - (y * this.numTiles.x));
 
             // get location in pixels

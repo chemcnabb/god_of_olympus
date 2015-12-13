@@ -18,6 +18,10 @@ Olympus.Game = function (game) {
     this.coinSpacingY = 10;
     this.spawnX = null;
 
+    this.enemyCollisionGroup = null;
+    this.playerCollisionGroup = null;
+    this.wallsCollisionGroup = null;
+
 
 };
 
@@ -31,28 +35,20 @@ Olympus.Game.prototype = {
 
 
     },
+
     create: function () {
 
+        this.game.physics.startSystem(Phaser.Physics.P2JS);
+        this.game.physics.p2.setImpactEvents(true);
+        this.game.physics.p2.restitution = 0.9;
+
+        map = this.game.add.tiledmap('game-world');
 
 
-//  The 'mario' key here is the Loader key given in game.load.tilemap
-        map = this.game.add.tilemap('world');
+        collsnObs = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision');
 
-        //  The first parameter is the tileset name, as specified in the Tiled map editor (and in the tilemap json file)
-        //  The second parameter maps this name to the Phaser.Cache key 'tiles'
-        map.addTilesetImage('water-tileset', 'water');
-
-
-        map.addTilesetImage('ground-tileset', 'ground');
-
-
-        //  Creates a layer from the World1 layer in the map data.
-        //  A Layer is effectively like a Phaser.Sprite, so is added to the display list.
-        layer = map.createLayer('world');
-
-
-        //  This resizes the game world to match the layer dimensions
-        layer.resizeWorld();
+        //console.log(collsnObs);
+        //this.game.physics.p2.enable(collsnObs, true);
 
 
 
@@ -73,10 +69,7 @@ Olympus.Game.prototype = {
 
 
 
-
-
-
-        this.game.time.advancedTiming = true;
+        //this.game.time.advancedTiming = true;
 
 
 
@@ -87,7 +80,7 @@ Olympus.Game.prototype = {
 
 
 
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
 
         if(this.params != undefined){
             this.player = new Hero(this.game, this.params.playerX, this.params.playerY);
@@ -99,13 +92,34 @@ Olympus.Game.prototype = {
         this.game.add.existing(this.player);
         this.enemy.bringToTop();
 
+        this.playerCollisionGroup = this.game.physics.p2.createCollisionGroup();
+        this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
+        this.wallsCollisionGroup =  this.game.physics.p2.createCollisionGroup();
+
+        for(var ob in collsnObs){
+
+
+            collsnObs[ob].setCollisionGroup(this.wallsCollisionGroup);
+            collsnObs[ob].collides(this.playerCollisionGroup);
+
+        }
+
+        this.player.body.collides(this.wallsCollisionGroup);
+
+        this.game.physics.p2.updateBoundsCollisionGroup();
+        this.enemy.body.setCollisionGroup(this.enemyCollisionGroup);
+
+        this.player.body.setCollisionGroup(this.playerCollisionGroup);
+
+
         this.scoreText = this.game.add.bitmapText(10,10, 'Diogenes', 'Score: ' + this.score, 24);
 
         this.game.camera.follow(this.player);
 
     },
     update: function () {
-
+        this.enemy.body.velocity.y = 0;
+        this.enemy.body.velocity.x = 0;
         this.player.move();
 
         if (this.player.y > this.enemy.y){
@@ -114,12 +128,29 @@ Olympus.Game.prototype = {
             this.enemy.bringToTop();
         }
 
-        if(this.game.physics.arcade.collide(this.player, this.enemy)){
-            console.log(this.playerstats);
+        this.player.body.collides(this.enemyCollisionGroup, this.hitEnemy, this);
+
+        this.enemy.body.collides(this.playerCollisionGroup, this.hitEnemy, this);
+
+
+
+
+        //if(this.game.physics.p2.collide(this.player, this.enemy)){
+        //if(this.player.body.collides([enemyCollisionGroup, playerCollisionGroup])){
+        //    console.log(this.playerstats);
+        //    this.playerstats.currentenemy = this.enemy;
+        //
+        //    this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
+        //}
+    },
+    hitEnemy : function(one, two){
+            console.log("hitEnemy");
             this.playerstats.currentenemy = this.enemy;
 
             this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
-        }
+    },
+    hitWall:function(){
+        console.log("wall hit");
     },
     shutdown: function() {
         console.log('shutting down');

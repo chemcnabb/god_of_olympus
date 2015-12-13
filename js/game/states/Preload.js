@@ -8,6 +8,10 @@ Olympus.Preload = function(){
 Olympus.Preload.prototype = {
     preload: function() {
         //show loading screen
+
+        this.game.add.plugin(Phaser.Plugin.Tiled);
+
+
         this.splash = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'splash');
         this.splash.anchor.setTo(0.5, 0.5);
         this.splash.height = window.innerHeight;
@@ -16,31 +20,48 @@ Olympus.Preload.prototype = {
 
 
 
-        //  The final one tells Phaser the foramt of the map data, in this case it's a JSON file exported from the Tiled map editor.
-        //  This could be Phaser.Tilemap.CSV too.
+        // By using the built-in cache key creator, the plugin can
+// automagically find all the necessary items in the cache
+        var cacheKey = Phaser.Plugin.Tiled.utils.cacheKey;
 
-        this.game.load.tilemap('world', 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
+// load the tiled map, notice it is "tiledmap" and not "tilemap"
+        this.game.load.tiledmap(cacheKey('game-world', 'tiledmap'), 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
+        console.log(this.game.cache.getTilemapData(cacheKey('game-world', 'tiledmap')));
+// load the images for your tilesets, make sure the last param to "cacheKey" is
+// the name of the tileset in your map so the plugin can find it later
+        this.game.load.image(cacheKey('game-world', 'tileset', 'water-tileset'), 'assets/images/world_map_tiles/water.png');
+        this.game.load.image(cacheKey('game-world', 'tileset', 'ground-tileset'), 'assets/images/world_map_tiles/ground.png');
 
-        //  Next we load the tileset. This is just an image, loaded in via the normal way we load images:
+        console.log(cacheKey('game-world', 'tiledmap'));
+// if you have image layers, be sure to load those too! Again,
+// make sure the last param is the name of your layer in the map.
+       // game.load.image(cacheKey('my-tiledmap', 'layer', 'layer-name'), 'assets/levels/layer.png');
 
-        this.game.load.image('water', 'assets/images/world_map_tiles/water.png');
-
-
-        this.game.load.image('ground', 'assets/images/world_map_tiles/ground.png');
-
-
-
-
+        //this.game.load.tilemap('world', 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
+        //this.game.load.image('water', 'assets/images/world_map_tiles/water.png');
+        //this.game.load.image('ground', 'assets/images/world_map_tiles/ground.png');
 
 
 
 
 
-        //this.load.image('background', 'assets/images/test_level.jpg');
+
+
+
 
 
         this.load.spritesheet('hero', 'assets/images/hero_spritesheet.png', 199, 285);
         this.load.spritesheet('enemy', 'assets/images/villain_spritesheet.png', 199, 285);
+
+
+
+
+
+
+
+
+
+
 
 
 

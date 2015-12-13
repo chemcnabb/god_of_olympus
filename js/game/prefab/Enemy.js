@@ -2,6 +2,7 @@
 Enemy = function (game, x, y, key) {
     Actor.call(this, game, x, y, key);
     this.hitArea = new Phaser.Rectangle(0, 0, 20, 20);
+
 };
 
 Enemy.prototype = Object.create(Actor.prototype);
