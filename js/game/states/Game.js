@@ -36,71 +36,42 @@ Olympus.Game.prototype = {
 
     },
 
-    create: function () {
-
-        this.game.physics.startSystem(Phaser.Physics.P2JS);
-        this.game.physics.p2.setImpactEvents(true);
-        this.game.physics.p2.restitution = 0.9;
-
-        map = this.game.add.tiledmap('game-world');
-
-
-        collsnObs = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision');
-
-        //console.log(collsnObs);
-        //this.game.physics.p2.enable(collsnObs, true);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //this.game.time.advancedTiming = true;
-
-
-
-
-        this.game.world.setBounds(0,0, 4096,4096);
-
-
-
-
-
-
-
-        if(this.params != undefined){
+    addActors: function () {
+        if (this.params != undefined) {
             this.player = new Hero(this.game, this.params.playerX, this.params.playerY);
-        }else{
-            this.player = new Hero(this.game, this.game.world.width/2+100, this.game.world.height/2);
-            this.enemy = new Enemy(this.game, this.game.world.width/2-100, this.game.world.height/2+190, 'enemy');
+        } else {
+            this.player = new Hero(this.game, this.game.world.width / 2 + 100, this.game.world.height / 2);
+            this.enemy = new Enemy(this.game, this.game.world.width / 2 - 100, this.game.world.height / 2 + 190, 'enemy');
             this.game.add.existing(this.enemy);
         }
         this.game.add.existing(this.player);
+        this.player.bringToTop();
         this.enemy.bringToTop();
+    },
+    addCollisions: function () {
+
+
+        collsnObs = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision');
+        collsnObs2 = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision2');
 
         this.playerCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
-        this.wallsCollisionGroup =  this.game.physics.p2.createCollisionGroup();
+        this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-        for(var ob in collsnObs){
+        for (var ob in collsnObs) {
 
 
             collsnObs[ob].setCollisionGroup(this.wallsCollisionGroup);
             collsnObs[ob].collides(this.playerCollisionGroup);
+
+        }
+
+
+        for (var ob2 in collsnObs2) {
+
+            console.log(ob2);
+            collsnObs2[ob2].setCollisionGroup(this.wallsCollisionGroup);
+            collsnObs2[ob2].collides(this.playerCollisionGroup);
 
         }
 
@@ -110,9 +81,25 @@ Olympus.Game.prototype = {
         this.enemy.body.setCollisionGroup(this.enemyCollisionGroup);
 
         this.player.body.setCollisionGroup(this.playerCollisionGroup);
+    },
+    addHud: function () {
+        this.scoreText = this.game.add.bitmapText(10, 10, 'Diogenes', 'Score: ' + this.score, 24);
+        this.scoreText.fixedToCamera = true;
+    },
+    addMap: function () {
+        map = this.game.add.tiledmap('game-world');
+        this.game.world.setBounds(0, 0, 4096, 4096);
+    },
+    create: function () {
 
+        this.game.physics.startSystem(Phaser.Physics.P2JS);
+        this.game.physics.p2.setImpactEvents(true);
+        this.game.physics.p2.restitution = 0.9;
 
-        this.scoreText = this.game.add.bitmapText(10,10, 'Diogenes', 'Score: ' + this.score, 24);
+        this.addMap();
+        this.addActors();
+        this.addCollisions();
+        this.addHud();
 
         this.game.camera.follow(this.player);
 
@@ -132,16 +119,6 @@ Olympus.Game.prototype = {
 
         this.enemy.body.collides(this.playerCollisionGroup, this.hitEnemy, this);
 
-
-
-
-        //if(this.game.physics.p2.collide(this.player, this.enemy)){
-        //if(this.player.body.collides([enemyCollisionGroup, playerCollisionGroup])){
-        //    console.log(this.playerstats);
-        //    this.playerstats.currentenemy = this.enemy;
-        //
-        //    this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
-        //}
     },
     hitEnemy : function(one, two){
             console.log("hitEnemy");

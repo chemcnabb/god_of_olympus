@@ -23,7 +23,7 @@ var Actor = function(game, x, y, sprite) {
 
 
     //this.body.setSize(this.width, 15, 0, 0);
-    this.body.setRectangle(this.width, 15, 0, 0);
+    this.body.setRectangle(this.width-8, 15, 0, (this.height/2)-7.5);
 
 
 
