@@ -104,10 +104,17 @@ Olympus.Game.prototype = {
         this.game.camera.follow(this.player);
 
     },
-    update: function () {
+    getTerrainType: function () {
+        terrain = map.getTileWorldXY(this.player.x, this.player.y, 32, 32, map.currentLayer).properties["terrain-type"];
+        if(terrain === undefined){
+            terrain = "none";
+        }
+        return terrain;
+    }, update: function () {
         this.enemy.body.velocity.y = 0;
         this.enemy.body.velocity.x = 0;
         this.player.move();
+        //console.log(this.getTerrainType());
 
         if (this.player.y > this.enemy.y){
             this.player.bringToTop();
@@ -122,6 +129,7 @@ Olympus.Game.prototype = {
     },
     hitEnemy : function(one, two){
             console.log("hitEnemy");
+        this.playerstats.playerstats.terrain = this.getTerrainType();
             this.playerstats.currentenemy = this.enemy;
 
             this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});

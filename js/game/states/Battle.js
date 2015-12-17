@@ -14,6 +14,7 @@ Olympus.Battle.prototype = {
     init:function(params){
       this.params = params;
         console.log(this.params);
+        console.log(this.params.playerstats.playerstats.terrain);
     },
     create: function () {
         this.enemy = new Enemy(this.game, this.params.playerstats.currentenemy.battleX, this.params.playerstats.currentenemy.battleY, this.params.playerstats.currentenemy.key );
@@ -32,6 +33,7 @@ Olympus.Battle.prototype = {
     },
     update: function () {
         //this.params.playerstats.playerstats.player.HP += 1;
+
         this.enemy.direction = this.params.playerstats.currentenemy.battleDirection;
         this.enemy.move();
         this.params.playerstats.playerstats.HP+=1;
