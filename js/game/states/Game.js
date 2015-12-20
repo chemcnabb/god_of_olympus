@@ -62,14 +62,17 @@ Olympus.Game.prototype = {
         //this.game.add.existing(this.player);
         this.enemies.add(this.player);
 
-        for (var i = 0; i < 16; i++)
+        for (var i = 0; i < 100; i++)
         {
-            //  This creates a new Phaser.Sprite instance within the group
-            //  It will be randomly placed within the world and use the 'baddie' image to display
 
+            // TODO: add array to globals to re init after battle
+            do{
+                xy = new Array(this.game.world.randomX, this.game.world.randomY);
+                console.log(this.getTerrainType(xy[0],xy[1]));
+            }while(this.getTerrainType(xy[0],xy[1]) !== "grass" );
 
-            var enemy = this.enemies.create(this.game.world.randomX, this.game.world.randomY, 'enemy');
-            console.log(enemy.width);
+            var enemy = this.enemies.create(xy[0],xy[1], 'enemy');
+
             enemy.scale.set(.2,.2);
             enemy.name = "enemy_" + i;
             enemy.body.setRectangle(enemy.width-8, 15, 0, (enemy.height/2)-7.5);
@@ -78,7 +81,7 @@ Olympus.Game.prototype = {
             console.log(enemy);
 
         }
-        //this.enemies.scale.set(.2,.2 );
+
         this.game.world.bringToTop(this.enemies);
 
         //this.player.bringToTop();
@@ -139,12 +142,25 @@ Olympus.Game.prototype = {
         this.game.camera.follow(this.player);
 
     },
-    getTerrainType: function () {
+    getPlayerTerrainType: function () {
         terrain = map.getTileWorldXY(this.player.x, this.player.y, 32, 32, map.currentLayer).properties["terrain-type"];
         if(terrain === undefined){
             terrain = "none";
         }
         return terrain;
+    },
+    getTerrainType: function (x, y) {
+        tile = map.getTileWorldXY(x, y, 32, 32, map.currentLayer);
+        if(tile != null){
+            terrain = tile.properties["terrain-type"];
+            if(terrain === undefined){
+                terrain = "none";
+            }
+            return terrain;
+        }else{
+            return "none"
+        }
+
     },
     update: function () {
         this.player.move();
@@ -181,7 +197,7 @@ Olympus.Game.prototype = {
             console.log("hitEnemy");
             console.log(two);
 
-        this.playerstats.playerstats.terrain = this.getTerrainType();
+        this.playerstats.playerstats.terrain = this.getPlayerTerrainType();
             this.playerstats.currentenemy = two.sprite;
 
             this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});

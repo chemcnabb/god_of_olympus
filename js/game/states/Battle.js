@@ -55,7 +55,7 @@ Olympus.Battle.prototype = {
             //this.enemies.create(360 + Math.random() * 200, 120 + Math.random() * 200, this.params.playerstats.currentenemy.key);
         //}
 
-        //this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.cursors = this.game.input.keyboard.createCursorKeys();
 
     },
     update: function () {
@@ -66,9 +66,9 @@ Olympus.Battle.prototype = {
         //this.player.move();
         //console.log(this.player.x);
         this.params.playerstats.playerstats.HP+=1;
-        //if(this.cursors.up.isDown){
-        //    this.game.state.start('Game', true, false, this.params);
-        //}
+        if(this.cursors.up.isDown){
+            this.game.state.start('Game', true, false, this.params);
+        }
 
 
     }

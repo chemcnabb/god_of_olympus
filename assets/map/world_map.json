@@ -708,13 +708,97 @@
          "tileheight":32,
          "tileproperties":
             {
+             "0":
+                {
+                 "terrain-type":"grass"
+                },
              "1":
+                {
+                 "terrain-type":"grass"
+                },
+             "10":
+                {
+                 "terrain-type":"grass"
+                },
+             "11":
+                {
+                 "terrain-type":"grass"
+                },
+             "12":
+                {
+                 "terrain-type":"grass"
+                },
+             "13":
+                {
+                 "terrain-type":"grass"
+                },
+             "14":
+                {
+                 "terrain-type":"grass"
+                },
+             "15":
+                {
+                 "terrain-type":"grass"
+                },
+             "16":
+                {
+                 "terrain-type":"grass"
+                },
+             "17":
+                {
+                 "terrain-type":"grass"
+                },
+             "18":
+                {
+                 "terrain-type":"grass"
+                },
+             "19":
                 {
                  "terrain-type":"grass"
                 },
              "2":
                 {
                  "terrain-type":"sand"
+                },
+             "20":
+                {
+                 "terrain-type":"grass"
+                },
+             "21":
+                {
+                 "terrain-type":"grass"
+                },
+             "22":
+                {
+                 "terrain-type":"grass"
+                },
+             "3":
+                {
+                 "terrain-type":"grass"
+                },
+             "4":
+                {
+                 "terrain-type":"grass"
+                },
+             "5":
+                {
+                 "terrain-type":"grass"
+                },
+             "6":
+                {
+                 "terrain-type":"grass"
+                },
+             "7":
+                {
+                 "terrain-type":"grass"
+                },
+             "8":
+                {
+                 "terrain-type":"grass"
+                },
+             "9":
+                {
+                 "terrain-type":"grass"
                 }
             },
          "tilewidth":32,
@@ -738,11 +822,11 @@
             {
              "0":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "1":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "10":
                 {
@@ -750,123 +834,123 @@
                 },
              "11":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "12":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "13":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "14":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "15":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "16":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "17":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "18":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "19":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "2":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "20":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "21":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "22":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "23":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "24":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "25":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "26":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "27":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "28":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "29":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "3":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "30":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "31":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "32":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "4":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "5":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "6":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "7":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "8":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 },
              "9":
                 {
-                 "terrain-type":"beach"
+                 "terrain-type":"sand"
                 }
             },
          "tiles":
