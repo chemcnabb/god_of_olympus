@@ -16,12 +16,12 @@ Olympus.Battle.prototype = {
         this.game.scale.setGameSize(window.innerWidth, window.innerHeight); // et voila!
         this.params = params;
         this.offsetY = this.game.width * .25;
-        console.log(this.offsetY);
+        //console.log(this.offsetY);
         this.terrain = this.params.playerstats.playerstats.terrain;
     },
     create: function () {
 
-        console.log(this.game.width);
+        //console.log(this.game.width);
         this.bg = this.add.sprite(this.game.width/2, this.game.height/2,this.terrain);
         this.bg.anchor.setTo(0.5, 0.5);
        // this.bg.width = window.innerWidth;

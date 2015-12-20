@@ -29,7 +29,8 @@ Olympus.Game.prototype = {
     init: function(params){
         console.log("game state initted");
         this.params = params;
-
+        this.enemylocations = {};
+        this.currentenemyindex = null;
         if (this.params != undefined){
             this.playerstats = this.params.playerstats;
         }
@@ -50,6 +51,16 @@ Olympus.Game.prototype = {
 
     },
 
+    setEnemyProperties: function (enemy, index) {
+        enemy.scale.set(.2, .2);
+        enemy.name = "enemy_" + index;
+
+        enemy.currentindex = index;
+        enemy.body.setRectangle(enemy.width - 8, 15, 0, (enemy.height / 2) - 7.5);
+        enemy.body.setCollisionGroup(this.enemyCollisionGroup);
+        enemy.body.collides([this.enemyCollisionGroup, this.playerCollisionGroup]);
+        console.log(enemy);
+    },
     addActors: function () {
 
 
@@ -62,26 +73,40 @@ Olympus.Game.prototype = {
         //this.game.add.existing(this.player);
         this.enemies.add(this.player);
 
-        for (var i = 0; i < 100; i++)
-        {
+        if(this.params == undefined) {
 
-            // TODO: add array to globals to re init after battle
-            do{
-                xy = new Array(this.game.world.randomX, this.game.world.randomY);
-                console.log(this.getTerrainType(xy[0],xy[1]));
-            }while(this.getTerrainType(xy[0],xy[1]) !== "grass" );
+            for (var i = 0; i < 100; i++) {
 
-            var enemy = this.enemies.create(xy[0],xy[1], 'enemy');
+                // TODO: add array to globals to re init after battle
 
-            enemy.scale.set(.2,.2);
-            enemy.name = "enemy_" + i;
-            enemy.body.setRectangle(enemy.width-8, 15, 0, (enemy.height/2)-7.5);
-            enemy.body.setCollisionGroup(this.enemyCollisionGroup);
-            enemy.body.collides([this.enemyCollisionGroup, this.playerCollisionGroup]);
-            console.log(enemy);
+                do {
+                    xy = new Array(this.game.world.randomX, this.game.world.randomY);
+                    //console.log(this.getTerrainType(xy[0], xy[1]));
+                } while (this.getTerrainType(xy[0], xy[1]) !== "grass");
 
+
+                var enemy = this.enemies.create(xy[0], xy[1], 'enemy');
+                this.setEnemyProperties(enemy, i);
+                this.enemylocations[i] = {x:xy[0], y:xy[1]};
+
+            }
+
+        }else{
+            //console.log(this.params.playerstats.enemylocations);
+            //console.log(this.params.playerstats.currentenemyindex);
+            // todo: CHECK IF ENEMY IS DEAD
+
+            for(enemylocationindex in this.params.playerstats.enemylocations){
+               if(enemylocationindex != this.params.playerstats.currentenemyindex){
+
+                enemylocation = this.params.playerstats.enemylocations[enemylocationindex];
+                   var enemy = this.enemies.create(enemylocation.x, enemylocation.y, 'enemy');
+                   this.setEnemyProperties(enemy, enemylocationindex);
+                   this.enemylocations[enemylocationindex] = {x:enemylocation.x, y:enemylocation.y};
+
+               }
+            }
         }
-
         this.game.world.bringToTop(this.enemies);
 
         //this.player.bringToTop();
@@ -106,7 +131,7 @@ Olympus.Game.prototype = {
 
         for (var ob2 in collsnObs2) {
 
-            console.log(ob2);
+            //console.log(ob2);
             collsnObs2[ob2].setCollisionGroup(this.wallsCollisionGroup);
             collsnObs2[ob2].collides(this.playerCollisionGroup);
 
@@ -194,13 +219,15 @@ Olympus.Game.prototype = {
 
     },
     hitEnemy : function(one, two){
-            console.log("hitEnemy");
-            console.log(two);
+        console.log("hitEnemy");
+        console.log(two.sprite);
 
         this.playerstats.playerstats.terrain = this.getPlayerTerrainType();
-            this.playerstats.currentenemy = two.sprite;
+        this.playerstats.enemylocations = this.enemylocations;
+        this.playerstats.currentenemyindex = two.sprite.currentindex;
+        this.playerstats.currentenemy = two.sprite;
 
-            this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
+        this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
     },
     hitWall:function(){
         console.log("wall hit");
@@ -208,7 +235,7 @@ Olympus.Game.prototype = {
     shutdown: function() {
         console.log('shutting down');
         //this.coins.destroy();
-        //this.enemies.destroy();
+        this.enemies.destroy();
         //this.scoreboard.destroy();
         //this.score = 0;
         //this.coinGenerator.timer.destroy();
