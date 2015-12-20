@@ -56,6 +56,11 @@ Olympus.MainMenu.prototype = {
         if(this.game.input.activePointer.justPressed()) {
             this.game.state.start('Game');
         }
+    },
+    shutdown: function(){
+        this.titleSprite.destroy();
+        this.startText.destroy();
+        this.splash.destroy();
     }
 
 };

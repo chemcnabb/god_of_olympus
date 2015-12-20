@@ -10,14 +10,6 @@ Olympus.Game = function (game) {
     }
 
     // settings
-    this.playerMaxY = null;
-    this.playerMaxAngle = 20;
-    this.playerMinAngle = -20;
-    this.previousCoinType = null;
-    this.coinSpacingX = 10;
-    this.coinSpacingY = 10;
-    this.spawnX = null;
-
     this.enemyCollisionGroup = null;
     this.playerCollisionGroup = null;
     this.wallsCollisionGroup = null;
@@ -59,7 +51,7 @@ Olympus.Game.prototype = {
         enemy.body.setRectangle(enemy.width - 8, 15, 0, (enemy.height / 2) - 7.5);
         enemy.body.setCollisionGroup(this.enemyCollisionGroup);
         enemy.body.collides([this.enemyCollisionGroup, this.playerCollisionGroup]);
-        console.log(enemy);
+        //console.log(enemy);
     },
     addActors: function () {
 
@@ -82,7 +74,7 @@ Olympus.Game.prototype = {
                 do {
                     xy = new Array(this.game.world.randomX, this.game.world.randomY);
                     //console.log(this.getTerrainType(xy[0], xy[1]));
-                } while (this.getTerrainType(xy[0], xy[1]) !== "grass");
+                } while (this.getTerrainType(xy[0], xy[1]) !== "sand");
 
 
                 var enemy = this.enemies.create(xy[0], xy[1], 'enemy');
@@ -156,16 +148,11 @@ Olympus.Game.prototype = {
         this.game.world.setBounds(0, 0, 4096, 4096);
     },
     create: function () {
-
-
-
         this.addMap();
         this.addActors();
         this.addCollisions();
         this.addHud();
-
         this.game.camera.follow(this.player);
-
     },
     getPlayerTerrainType: function () {
         terrain = map.getTileWorldXY(this.player.x, this.player.y, 32, 32, map.currentLayer).properties["terrain-type"];
@@ -187,45 +174,31 @@ Olympus.Game.prototype = {
         }
 
     },
-    update: function () {
-        this.player.move();
-        this.player.body.collides(this.enemyCollisionGroup, this.hitEnemy, this);
-
-        for(index in this.enemies.children){
+    checkPlayerEnemyCollision: function () {
+        for (index in this.enemies.children) {
             var enemy = this.enemies.children[index];
-            if(enemy.body && enemy.key != "hero"){
-                enemy.body.setZeroVelocity()
-            }
+            if (enemy.body && enemy.key != "hero") {
+                enemy.body.setZeroVelocity();
 
-            if (this.player.y > enemy.y){
-                this.player.bringToTop();
-            }else{
-                enemy.bringToTop();
-            }
-            if(enemy.body){
                 enemy.body.collides(this.playerCollisionGroup, this.hitEnemy, this);
             }
         }
-
-
-
-
-
         this.enemies.sort('y', Phaser.Group.SORT_ASCENDING);
-
-
-
-
-
     },
-    hitEnemy : function(one, two){
-        console.log("hitEnemy");
-        console.log(two.sprite);
-
+    update: function () {
+        this.player.move();
+        this.player.body.collides(this.enemyCollisionGroup, this.hitEnemy, this);
+        this.checkPlayerEnemyCollision();
+    },
+    setPlayerStats: function (two) {
         this.playerstats.playerstats.terrain = this.getPlayerTerrainType();
         this.playerstats.enemylocations = this.enemylocations;
         this.playerstats.currentenemyindex = two.sprite.currentindex;
         this.playerstats.currentenemy = two.sprite;
+    }, hitEnemy : function(hero, enemy){
+        console.log("hitEnemy");
+
+        this.setPlayerStats(enemy);
 
         this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
     },
