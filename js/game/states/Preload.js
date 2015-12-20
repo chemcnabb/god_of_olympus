@@ -12,9 +12,7 @@ Olympus.Preload.prototype = {
         this.game.add.plugin(Phaser.Plugin.Tiled);
 
 
-        this.splash = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'splash');
-        this.splash.anchor.setTo(0.5, 0.5);
-        this.splash.height = window.innerHeight;
+
 
 
 

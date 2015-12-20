@@ -18,7 +18,7 @@ var Actor = function(game, x, y, sprite) {
 
     this.battleX = 200;
     this.battleY = 200;
-    this.battleDirection = "left";
+    this.battleDirection = "right";
 
 
 

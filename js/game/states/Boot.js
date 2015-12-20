@@ -8,6 +8,8 @@ Olympus.Boot.prototype = {
         //assets we'll use in the loading screen
         this.load.image('preloadbar', 'assets/images/preloader-bar.png');
         this.load.image('splash', 'assets/images/menu_bg.jpg');
+        this.load.image('sand', 'assets/images/battle/sand.jpg');
+        this.load.image('grass', 'assets/images/battle/grass.jpg');
     },
     create: function() {
         //loading screen will have a white background
@@ -24,7 +26,7 @@ Olympus.Boot.prototype = {
         this.scale.updateLayout(true);
 
         //physics system
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
+        //this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         this.state.start('Preload');
     }

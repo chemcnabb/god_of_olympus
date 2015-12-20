@@ -29,24 +29,60 @@ Olympus.Game.prototype = {
     init: function(params){
         console.log("game state initted");
         this.params = params;
+
         if (this.params != undefined){
             this.playerstats = this.params.playerstats;
         }
 
+        this.game.physics.startSystem(Phaser.Physics.P2JS);
+        this.game.physics.p2.setImpactEvents(true);
+        this.game.physics.p2.restitution = 0.9;
+        //this.game.physics.p2.enable(this, true);
+
+
+        this.enemies = this.game.add.group();
+        this.enemies.enableBody = true;
+        this.enemies.physicsBodyType = Phaser.Physics.P2JS;
+
+        this.playerCollisionGroup = this.game.physics.p2.createCollisionGroup();
+        this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
+        this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
     },
 
     addActors: function () {
+
+
+
         if (this.params != undefined) {
             this.player = new Hero(this.game, this.params.playerX, this.params.playerY);
         } else {
             this.player = new Hero(this.game, this.game.world.width / 2 + 100, this.game.world.height / 2);
-            this.enemy = new Enemy(this.game, this.game.world.width / 2 - 100, this.game.world.height / 2 + 190, 'enemy');
-            this.game.add.existing(this.enemy);
         }
-        this.game.add.existing(this.player);
-        this.player.bringToTop();
-        this.enemy.bringToTop();
+        //this.game.add.existing(this.player);
+        this.enemies.add(this.player);
+
+        for (var i = 0; i < 16; i++)
+        {
+            //  This creates a new Phaser.Sprite instance within the group
+            //  It will be randomly placed within the world and use the 'baddie' image to display
+
+
+            var enemy = this.enemies.create(this.game.world.randomX, this.game.world.randomY, 'enemy');
+            console.log(enemy.width);
+            enemy.scale.set(.2,.2);
+            enemy.name = "enemy_" + i;
+            enemy.body.setRectangle(enemy.width-8, 15, 0, (enemy.height/2)-7.5);
+            enemy.body.setCollisionGroup(this.enemyCollisionGroup);
+            enemy.body.collides([this.enemyCollisionGroup, this.playerCollisionGroup]);
+            console.log(enemy);
+
+        }
+        //this.enemies.scale.set(.2,.2 );
+        this.game.world.bringToTop(this.enemies);
+
+        //this.player.bringToTop();
+        //this.enemy.bringToTop();
     },
     addCollisions: function () {
 
@@ -54,9 +90,7 @@ Olympus.Game.prototype = {
         collsnObs = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision');
         collsnObs2 = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision2');
 
-        this.playerCollisionGroup = this.game.physics.p2.createCollisionGroup();
-        this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
-        this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
+
 
         for (var ob in collsnObs) {
 
@@ -78,7 +112,10 @@ Olympus.Game.prototype = {
         this.player.body.collides(this.wallsCollisionGroup);
 
         this.game.physics.p2.updateBoundsCollisionGroup();
-        this.enemy.body.setCollisionGroup(this.enemyCollisionGroup);
+
+
+
+
 
         this.player.body.setCollisionGroup(this.playerCollisionGroup);
     },
@@ -92,9 +129,7 @@ Olympus.Game.prototype = {
     },
     create: function () {
 
-        this.game.physics.startSystem(Phaser.Physics.P2JS);
-        this.game.physics.p2.setImpactEvents(true);
-        this.game.physics.p2.restitution = 0.9;
+
 
         this.addMap();
         this.addActors();
@@ -110,27 +145,44 @@ Olympus.Game.prototype = {
             terrain = "none";
         }
         return terrain;
-    }, update: function () {
-        this.enemy.body.velocity.y = 0;
-        this.enemy.body.velocity.x = 0;
+    },
+    update: function () {
         this.player.move();
-        //console.log(this.getTerrainType());
-
-        if (this.player.y > this.enemy.y){
-            this.player.bringToTop();
-        }else{
-            this.enemy.bringToTop();
-        }
-
         this.player.body.collides(this.enemyCollisionGroup, this.hitEnemy, this);
 
-        this.enemy.body.collides(this.playerCollisionGroup, this.hitEnemy, this);
+        for(index in this.enemies.children){
+            var enemy = this.enemies.children[index];
+            if(enemy.body && enemy.key != "hero"){
+                enemy.body.setZeroVelocity()
+            }
+
+            if (this.player.y > enemy.y){
+                this.player.bringToTop();
+            }else{
+                enemy.bringToTop();
+            }
+            if(enemy.body){
+                enemy.body.collides(this.playerCollisionGroup, this.hitEnemy, this);
+            }
+        }
+
+
+
+
+
+        this.enemies.sort('y', Phaser.Group.SORT_ASCENDING);
+
+
+
+
 
     },
     hitEnemy : function(one, two){
             console.log("hitEnemy");
+            console.log(two);
+
         this.playerstats.playerstats.terrain = this.getTerrainType();
-            this.playerstats.currentenemy = this.enemy;
+            this.playerstats.currentenemy = two.sprite;
 
             this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
     },
