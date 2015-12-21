@@ -6,6 +6,20 @@ Olympus.Boot = function(){};
 Olympus.Boot.prototype = {
     preload: function() {
         this.game.add.plugin(Phaser.Plugin.Tiled);
+        this.game.stateTransition = this.game.plugins.add(Phaser.Plugin.StateTransition);
+
+        this.game.stateTransition.configure({
+            duration: Phaser.Timer.SECOND * 0.8,
+            ease: Phaser.Easing.Exponential.InOut,
+            properties: {
+                alpha: 0,
+                scale: {
+                    x: 1.4,
+                    y: 1.4
+                }
+            }
+        });
+
         //assets we'll use in the loading screen
         this.load.image('preloadbar', 'assets/images/preloader-bar.png');
         this.load.image('splash', 'assets/images/menu_bg.jpg');
@@ -13,6 +27,8 @@ Olympus.Boot.prototype = {
         this.load.image('grass', 'assets/images/battle/grass.png');
         this.load.spritesheet('hero', 'assets/images/hero_spritesheet.png', 199, 285);
         this.load.spritesheet('enemy', 'assets/images/villain_spritesheet.png', 199, 285);
+
+
 
         // By using the built-in cache key creator, the plugin can
         // automagically find all the necessary items in the cache

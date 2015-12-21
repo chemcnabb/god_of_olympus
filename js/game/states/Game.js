@@ -49,6 +49,7 @@ Olympus.Game.prototype = {
 
         enemy.currentindex = index;
         enemy.body.setRectangle(enemy.width - 8, 15, 0, (enemy.height / 2) - 7.5);
+        enemy.body.fixedRotation = true;
         enemy.body.setCollisionGroup(this.enemyCollisionGroup);
         enemy.body.collides([this.enemyCollisionGroup, this.playerCollisionGroup]);
         //console.log(enemy);
@@ -106,20 +107,13 @@ Olympus.Game.prototype = {
     },
     addCollisions: function () {
 
-
         collsnObs = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision');
         collsnObs2 = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision2');
 
-
-
         for (var ob in collsnObs) {
-
-
             collsnObs[ob].setCollisionGroup(this.wallsCollisionGroup);
             collsnObs[ob].collides(this.playerCollisionGroup);
-
         }
-
 
         for (var ob2 in collsnObs2) {
 
@@ -133,15 +127,13 @@ Olympus.Game.prototype = {
 
         this.game.physics.p2.updateBoundsCollisionGroup();
 
-
-
-
-
         this.player.body.setCollisionGroup(this.playerCollisionGroup);
     },
     addHud: function () {
         this.scoreText = this.game.add.bitmapText(10, 10, 'Diogenes', 'Score: ' + this.score, 24);
         this.scoreText.fixedToCamera = true;
+
+
     },
     addMap: function () {
         map = this.game.add.tiledmap('game-world');
@@ -200,7 +192,8 @@ Olympus.Game.prototype = {
 
         this.setPlayerStats(enemy);
 
-        this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
+        //this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
+        this.game.stateTransition.to('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
     },
     hitWall:function(){
         console.log("wall hit");

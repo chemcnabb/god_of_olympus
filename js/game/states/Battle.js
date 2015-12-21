@@ -24,6 +24,7 @@ Olympus.Battle.prototype = {
     addEnemies: function () {
         this.enemy = new Enemy(this.game, this.game.width - this.offsetY, 350, this.params.playerstats.currentenemy.key);
         this.enemy.direction = "left";
+        this.enemy.body.fixedRotation = true;
         this.game.add.existing(this.enemy);
         this.enemy.bringToTop();
         //this.enemies = this.game.add.group();
@@ -80,7 +81,8 @@ Olympus.Battle.prototype = {
         //console.log(this.player.x);
         this.params.playerstats.playerstats.HP+=1;
         if(this.cursors.up.isDown){
-            this.game.state.start('Game', true, false, this.params);
+            //this.game.state.start('Game', true, false, this.params);
+            this.game.stateTransition.to('Game', true, false, this.params);
         }
 
 
