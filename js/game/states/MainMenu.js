@@ -5,11 +5,20 @@ Olympus.MainMenu = function (game) {
     this.player = null;
     this.music = null;
     this.map = null;
+    this.loaded = false;
     this.layer = null;
     this.background = null;
 };
 
 Olympus.MainMenu.prototype = {
+    init:function(){
+
+        this.load.onFileComplete.add(this.fileComplete, this);
+
+    },
+    fileComplete: function(progress, cacheKey, success, totalLoaded, totalFiles) {
+        this.loaded = progress;
+    },
 
     create: function () {
 
@@ -53,14 +62,16 @@ Olympus.MainMenu.prototype = {
 
     },
     update: function () {
+
         if(this.game.input.activePointer.justPressed()) {
-            this.game.stateTransition.to('Game');
+            this.game.stateTransition.to('Game', false, false);
         }
     },
     shutdown: function(){
         this.titleSprite.destroy();
         this.startText.destroy();
         this.splash.destroy();
+
     }
 
 };

@@ -14,10 +14,15 @@ Olympus.Battle = function (game) {
 Olympus.Battle.prototype = {
     init:function(params){
 
+
+
         this.params = params;
         this.offsetY = this.game.width * .25;
         //console.log(this.offsetY);
         this.terrain = this.params.playerstats.playerstats.terrain;
+        this.addBackground();
+        this.addEnemies();
+        this.addPlayer();
 
 
     },
@@ -43,34 +48,18 @@ Olympus.Battle.prototype = {
         this.player.bringToTop();
     },
     addBackground: function () {
-
         width = Math.floor((window.innerWidth/2)/100)*100;
         height = Math.floor((window.innerHeight/2)/100)*100;
-        console.log(height);
         this.bg = this.add.sprite(width, height, this.terrain);
         this.bg.anchor.setTo(0.5, 0.5);
         this.bg.width = window.innerWidth;
-        console.log(this.bg);
         this.bg.bringToTop();
     },
     create: function () {
 
-        //console.log(this.game.width);
-        this.addBackground();
-
-        this.addEnemies();
-        //
-        this.addPlayer();
-
         this.player.scale.setTo(.6);
         this.enemy.scale.setTo(.6);
-        //
-        //
-
-
-
         this.cursors = this.game.input.keyboard.createCursorKeys();
-
     },
     update: function () {
         //this.params.playerstats.playerstats.player.HP += 1;
@@ -85,6 +74,12 @@ Olympus.Battle.prototype = {
             this.game.stateTransition.to('Game', true, false, this.params);
         }
 
+
+    },
+    shutdown: function(){
+        this.player.destroy();
+        this.enemy.destroy();
+        this.bg.destroy();
 
     }
 

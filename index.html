@@ -8,6 +8,7 @@
     <meta name="viewport" content="minimal-ui">
 
     <script type="text/javascript" src="js/library/phaser.js"></script>
+    <script type="text/javascript" src="js/library/phaser-debug.js"></script>
     <script type="text/javascript" src="js/library/phaser-tiled.js"></script>
     <script type="text/javascript" src="js/library/phaser-state-transition-plugin.js"></script>
     <script type="text/javascript" src="js/game/states/Boot.js"></script>
@@ -25,11 +26,28 @@
             padding: 0px;
             margin: 0px;
         }
+        body {
+            background-color: black;
+        }
+        header {
+            color: white;
+        }
+        #game {
+            display: block;
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin:0 auto;
+        }
+        #game canvas {
+            max-width: 100%;
+        }
     </style>
 </head>
 
 <body>
 <!-- include the main game file -->
+<div id="game"></div>
 <script src="js/main.js"></script>
 </body>
 </html>

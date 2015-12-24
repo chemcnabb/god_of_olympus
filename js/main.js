@@ -1,6 +1,6 @@
 var Olympus = Olympus || {};
 
-Olympus.game = new Phaser.Game(800, 600, Phaser.AUTO, '');
+Olympus.game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
 
 Olympus.game.state.add('Boot', Olympus.Boot);
 Olympus.game.state.add('Preload', Olympus.Preload);

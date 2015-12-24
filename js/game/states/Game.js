@@ -3,8 +3,10 @@ var Olympus = Olympus || {};
 var stateCounter = 0;
 Olympus.Game = function (game) {
     console.log('init');
+
     // score
     this.score = 0;
+    this.map = {};
     if(this.playerstats == undefined){
         this.playerstats = ActorStats;
     }
@@ -20,6 +22,9 @@ Olympus.Game = function (game) {
 Olympus.Game.prototype = {
     init: function(params){
         console.log("game state initted");
+
+
+
         this.params = params;
         this.enemylocations = {};
         this.currentenemyindex = null;
@@ -42,28 +47,34 @@ Olympus.Game.prototype = {
         this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
     },
+    preload: function(){
 
+    },
     setEnemyProperties: function (enemy, index) {
+
+        var enemy = enemy;
         enemy.scale.set(.2, .2);
         enemy.name = "enemy_" + index;
-
         enemy.currentindex = index;
+        enemy.body.fixedRotation = true; // no rotation
         enemy.body.setRectangle(enemy.width - 8, 15, 0, (enemy.height / 2) - 7.5);
-        enemy.body.fixedRotation = true;
+
+
         enemy.body.setCollisionGroup(this.enemyCollisionGroup);
         enemy.body.collides([this.enemyCollisionGroup, this.playerCollisionGroup]);
         //console.log(enemy);
     },
     addActors: function () {
 
+        console.log(this.player);
 
+            if (this.params != undefined) {
+                this.player = new Hero(this.game, this.params.playerX, this.params.playerY);
+            } else {
+                this.player = new Hero(this.game, this.game.world.width / 2 + 100, this.game.world.height / 2);
+            }
 
-        if (this.params != undefined) {
-            this.player = new Hero(this.game, this.params.playerX, this.params.playerY);
-        } else {
-            this.player = new Hero(this.game, this.game.world.width / 2 + 100, this.game.world.height / 2);
-        }
-        //this.game.add.existing(this.player);
+        this.game.camera.follow(this.player);
         this.enemies.add(this.player);
 
         if(this.params == undefined) {
@@ -73,13 +84,13 @@ Olympus.Game.prototype = {
                 // TODO: add array to globals to re init after battle
 
                 do {
-                    xy = new Array(this.game.world.randomX, this.game.world.randomY);
-                    //console.log(this.getTerrainType(xy[0], xy[1]));
-                } while (this.getTerrainType(xy[0], xy[1]) !== "sand");
+                    xy = [this.game.world.randomX, this.game.world.randomY];
+
+                } while (this.isTileWalkable(xy[0], xy[1]) === false);
 
 
-                var enemy = this.enemies.create(xy[0], xy[1], 'enemy');
-                this.setEnemyProperties(enemy, i);
+                var enemyObj = this.enemies.create(xy[0], xy[1], 'enemy');
+                this.setEnemyProperties(enemyObj, i);
                 this.enemylocations[i] = {x:xy[0], y:xy[1]};
 
             }
@@ -91,24 +102,23 @@ Olympus.Game.prototype = {
 
             for(enemylocationindex in this.params.playerstats.enemylocations){
                if(enemylocationindex != this.params.playerstats.currentenemyindex){
-
-                enemylocation = this.params.playerstats.enemylocations[enemylocationindex];
-                   var enemy = this.enemies.create(enemylocation.x, enemylocation.y, 'enemy');
-                   this.setEnemyProperties(enemy, enemylocationindex);
-                   this.enemylocations[enemylocationindex] = {x:enemylocation.x, y:enemylocation.y};
+                    enemylocation = this.params.playerstats.enemylocations[enemylocationindex];
+                    var enemyObj = this.enemies.create(enemylocation.x, enemylocation.y, 'enemy');
+                    this.setEnemyProperties(enemyObj, enemylocationindex);
+                    this.enemylocations[enemylocationindex] = {x:enemylocation.x, y:enemylocation.y};
 
                }
             }
         }
-        this.game.world.bringToTop(this.enemies);
+
 
         //this.player.bringToTop();
         //this.enemy.bringToTop();
     },
     addCollisions: function () {
 
-        collsnObs = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision');
-        collsnObs2 = this.game.physics.p2.convertTiledCollisionObjects(map, 'collision2');
+        collsnObs = this.game.physics.p2.convertTiledCollisionObjects(this.map, 'collision');
+        collsnObs2 = this.game.physics.p2.convertTiledCollisionObjects(this.map, 'collision2');
 
         for (var ob in collsnObs) {
             collsnObs[ob].setCollisionGroup(this.wallsCollisionGroup);
@@ -136,7 +146,7 @@ Olympus.Game.prototype = {
 
     },
     addMap: function () {
-        map = this.game.add.tiledmap('game-world');
+        this.map = this.game.add.tiledmap('game-world');
         this.game.world.setBounds(0, 0, 4096, 4096);
     },
     create: function () {
@@ -144,17 +154,19 @@ Olympus.Game.prototype = {
         this.addActors();
         this.addCollisions();
         this.addHud();
-        this.game.camera.follow(this.player);
+
+        this.game.world.bringToTop(this.enemies);
+
     },
     getPlayerTerrainType: function () {
-        terrain = map.getTileWorldXY(this.player.x, this.player.y, 32, 32, map.currentLayer).properties["terrain-type"];
+        terrain = this.map.getTileWorldXY(this.player.x, this.player.y, 32, 32, this.map.currentLayer).properties["terrain-type"];
         if(terrain === undefined){
             terrain = "none";
         }
         return terrain;
     },
     getTerrainType: function (x, y) {
-        tile = map.getTileWorldXY(x, y, 32, 32, map.currentLayer);
+        tile = this.map.getTileWorldXY(x, y, 32, 32, this.map.currentLayer);
         if(tile != null){
             terrain = tile.properties["terrain-type"];
             if(terrain === undefined){
@@ -163,6 +175,21 @@ Olympus.Game.prototype = {
             return terrain;
         }else{
             return "none"
+        }
+
+    },
+    isTileWalkable: function (x, y) {
+        tile = this.map.getTileWorldXY(x, y, 32, 32, this.map.currentLayer);
+        if(tile != null){
+            walkable = tile.properties["walkable"];
+
+            if(walkable === undefined){
+
+                walkable = false;
+            }
+            return walkable;
+        }else{
+            return false;
         }
 
     },
@@ -187,12 +214,10 @@ Olympus.Game.prototype = {
         this.playerstats.enemylocations = this.enemylocations;
         this.playerstats.currentenemyindex = two.sprite.currentindex;
         this.playerstats.currentenemy = two.sprite;
-    }, hitEnemy : function(hero, enemy){
+    },
+    hitEnemy : function(hero, enemy){
         console.log("hitEnemy");
-
         this.setPlayerStats(enemy);
-
-        //this.state.start('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
         this.game.stateTransition.to('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
     },
     hitWall:function(){
@@ -202,6 +227,8 @@ Olympus.Game.prototype = {
         console.log('shutting down');
         //this.coins.destroy();
         this.enemies.destroy();
+        this.map.destroy();
+        this.scoreText.destroy();
         //this.scoreboard.destroy();
         //this.score = 0;
         //this.coinGenerator.timer.destroy();

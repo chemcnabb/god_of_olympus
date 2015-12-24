@@ -710,95 +710,118 @@
             {
              "0":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "1":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "10":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "11":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "12":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "13":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "14":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "15":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "16":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "17":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "18":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "19":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "2":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "20":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "21":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "22":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "3":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "4":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "5":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "6":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "7":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "8":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 },
              "9":
                 {
-                 "terrain-type":"grass"
+                 "terrain-type":"grass",
+                 "walkable":"true"
                 }
             },
          "tilewidth":32,
@@ -822,135 +845,168 @@
             {
              "0":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "1":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "10":
                 {
-                 "terrain-type":"water"
+                 "terrain-type":"water",
+                 "walkable":"false"
                 },
              "11":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "12":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "13":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "14":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "15":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "16":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "17":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "18":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "19":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "2":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "20":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "21":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "22":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "23":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "24":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "25":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "26":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "27":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "28":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "29":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "3":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "30":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "31":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "32":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "4":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "5":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "6":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "7":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "8":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 },
              "9":
                 {
-                 "terrain-type":"sand"
+                 "terrain-type":"sand",
+                 "walkable":"true"
                 }
             },
          "tiles":

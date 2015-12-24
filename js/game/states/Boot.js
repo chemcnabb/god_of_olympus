@@ -4,10 +4,10 @@ Olympus.Boot = function(){};
 
 //setting game configuration and loading the assets for the loading screen
 Olympus.Boot.prototype = {
-    preload: function() {
+    init: function(){
+        this.game.add.plugin(Phaser.Plugin.Debug);
         this.game.add.plugin(Phaser.Plugin.Tiled);
         this.game.stateTransition = this.game.plugins.add(Phaser.Plugin.StateTransition);
-
         this.game.stateTransition.configure({
             duration: Phaser.Timer.SECOND * 0.8,
             ease: Phaser.Easing.Exponential.InOut,
@@ -19,6 +19,10 @@ Olympus.Boot.prototype = {
                 }
             }
         });
+
+    },
+    preload: function() {
+
 
         //assets we'll use in the loading screen
         this.load.image('preloadbar', 'assets/images/preloader-bar.png');
@@ -44,7 +48,7 @@ Olympus.Boot.prototype = {
     },
     create: function() {
         //loading screen will have a white background
-        this.game.backgroundColor = '#fff';
+        //this.game.backgroundColor = '#fff';
 
         //scaling options
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
