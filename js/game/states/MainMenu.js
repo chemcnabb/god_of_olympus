@@ -64,6 +64,7 @@ Olympus.MainMenu.prototype = {
     update: function () {
 
         if(this.game.input.activePointer.justPressed()) {
+
             this.game.stateTransition.to('Game', false, false);
         }
     },

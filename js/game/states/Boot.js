@@ -5,7 +5,7 @@ Olympus.Boot = function(){};
 //setting game configuration and loading the assets for the loading screen
 Olympus.Boot.prototype = {
     init: function(){
-        this.game.add.plugin(Phaser.Plugin.Debug);
+        //this.game.add.plugin(Phaser.Plugin.Debug);
         this.game.add.plugin(Phaser.Plugin.Tiled);
         this.game.stateTransition = this.game.plugins.add(Phaser.Plugin.StateTransition);
         this.game.stateTransition.configure({
@@ -43,8 +43,11 @@ Olympus.Boot.prototype = {
 
         // load the images for your tilesets, make sure the last param to "cacheKey" is
         // the name of the tileset in your map so the plugin can find it later
-        this.game.load.image(cacheKey('game-world', 'tileset', 'water-tileset'), 'assets/images/world_map_tiles/water.png');
-        this.game.load.image(cacheKey('game-world', 'tileset', 'ground-tileset'), 'assets/images/world_map_tiles/ground.png');
+        //this.game.load.image(cacheKey('game-world', 'tileset', 'water-tileset'), 'assets/images/world_map_tiles/water.png');
+        this.game.load.image(cacheKey('game-world', 'tileset', 'buildings'), 'assets/images/world_map_tiles/buildings.png');
+        this.game.load.image(cacheKey('game-world', 'tileset', 'trees'), 'assets/images/world_map_tiles/trees.png');
+        this.game.load.image(cacheKey('game-world', 'tileset', 'treesv6_0'), 'assets/images/world_map_tiles/treesv6_0.png');
+        this.game.load.image(cacheKey('game-world', 'tileset', 'ground_tiles'), 'assets/images/world_map_tiles/ground_tiles/ground_tiles.png');
     },
     create: function() {
         //loading screen will have a white background

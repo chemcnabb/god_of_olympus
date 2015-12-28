@@ -58,6 +58,8 @@
 
     // Create current state texture
     this._texture = new Phaser.RenderTexture(this.game, this.game.width, this.game.height, 'cover');
+
+
     //this._texture = new Phaser.RenderTexture(this.game, window.innerWidth, window.innerHeight, 'cover');
 
     // Draw the current world to the render
