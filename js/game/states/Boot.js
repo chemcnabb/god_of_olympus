@@ -1,12 +1,33 @@
 var Olympus = Olympus || {};
 
 Olympus.Boot = function(){};
+Olympus.State = {};
+Olympus.Map = {};
+Olympus.Map.Object = {};
+Olympus.Map.MAPS = [
+    // Overworld maps
+    'game-world',
+
+    // Modules used in maps
+    //'area_1'
+];
+
+
+
+/**
+ * Created by knash on 15-03-12.
+ */
+
+
+
+
+
 
 //setting game configuration and loading the assets for the loading screen
 Olympus.Boot.prototype = {
     init: function(){
-        //this.game.add.plugin(Phaser.Plugin.Debug);
-        this.game.add.plugin(Phaser.Plugin.Tiled);
+        this.game.add.plugin(Phaser.Plugin.Debug);
+        //this.game.add.plugin(Phaser.Plugin.Tiled);
         this.game.stateTransition = this.game.plugins.add(Phaser.Plugin.StateTransition);
         this.game.stateTransition.configure({
             duration: Phaser.Timer.SECOND * 0.8,
@@ -25,29 +46,29 @@ Olympus.Boot.prototype = {
 
 
         //assets we'll use in the loading screen
-        this.load.image('preloadbar', 'assets/images/preloader-bar.png');
-        this.load.image('splash', 'assets/images/menu_bg.jpg');
-        this.load.image('sand', 'assets/images/battle/sand.png');
-        this.load.image('grass', 'assets/images/battle/grass.png');
-        this.load.spritesheet('hero', 'assets/images/hero_spritesheet.png', 199, 285);
-        this.load.spritesheet('enemy', 'assets/images/villain_spritesheet.png', 199, 285);
+        this.game.load.image('preloadbar', 'assets/images/preloader-bar.png');
+        this.game.load.image('splash', 'assets/images/menu_bg.jpg');
+        this.game.load.image('battle-sand', 'assets/images/battle/sand.png');
+        this.game.load.image('battle-grass', 'assets/images/battle/grass.png');
+
+        this.game.load.spritesheet('hero', 'assets/images/hero_spritesheet.png', 199, 285);
+        this.game.load.spritesheet('enemy', 'assets/images/villain_spritesheet.png', 199, 285);
+
+
+        //this.game.load.tilemap('game-world', 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
 
 
 
-        // By using the built-in cache key creator, the plugin can
-        // automagically find all the necessary items in the cache
-        var cacheKey = Phaser.Plugin.Tiled.utils.cacheKey;
+        //this.game.load.image('buildings', 'assets/images/world_map_tiles/buildings.png');
+        //this.game.load.image('trees', 'assets/images/world_map_tiles/trees.png');
+        this.game.load.image('treesv6_0', 'assets/images/world_map_tiles/treesv6_0.png');
+        this.game.load.image('ground_tiles', 'assets/images/world_map_tiles/ground_tiles.png');
 
-        // load the tiled map, notice it is "tiledmap" and not "tilemap"
-        this.game.load.tiledmap(cacheKey('game-world', 'tiledmap'), 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
-
-        // load the images for your tilesets, make sure the last param to "cacheKey" is
-        // the name of the tileset in your map so the plugin can find it later
-        //this.game.load.image(cacheKey('game-world', 'tileset', 'water-tileset'), 'assets/images/world_map_tiles/water.png');
-        this.game.load.image(cacheKey('game-world', 'tileset', 'buildings'), 'assets/images/world_map_tiles/buildings.png');
-        this.game.load.image(cacheKey('game-world', 'tileset', 'trees'), 'assets/images/world_map_tiles/trees.png');
-        this.game.load.image(cacheKey('game-world', 'tileset', 'treesv6_0'), 'assets/images/world_map_tiles/treesv6_0.png');
-        this.game.load.image(cacheKey('game-world', 'tileset', 'ground_tiles'), 'assets/images/world_map_tiles/ground_tiles/ground_tiles.png');
+        var map;
+        for (var i = 0; i < Olympus.Map.MAPS.length; i++) {
+            map = Olympus.Map.MAPS[i];
+            this.game.load.tilemap(map, 'assets/map/' + map + '.json', null, Phaser.Tilemap.TILED_JSON);
+        }
     },
     create: function() {
         //loading screen will have a white background

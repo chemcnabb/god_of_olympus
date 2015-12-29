@@ -50,9 +50,10 @@ Olympus.Battle.prototype = {
     addBackground: function () {
         width = Math.floor((window.innerWidth/2)/100)*100;
         height = Math.floor((window.innerHeight/2)/100)*100;
-        this.bg = this.add.sprite(width, height, this.terrain);
+        this.bg = this.add.sprite(width, height, "battle-"+this.terrain);
         this.bg.anchor.setTo(0.5, 0.5);
-        this.bg.width = window.innerWidth;
+        this.bg.scale.x = 6;
+        this.bg.scale.y = 6;
         this.bg.bringToTop();
     },
     create: function () {

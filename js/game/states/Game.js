@@ -8,13 +8,8 @@ Olympus.Game = function (game) {
     this.score = 0;
     this.map = {};
     this.playerstats = this.playerstats || ActorStats;
+    this.enemies = {};
 
-
-
-    // settings
-    //this.enemyCollisionGroup = null;
-    //this.playerCollisionGroup = null;
-    //this.wallsCollisionGroup = null;
 
 
 };
@@ -75,11 +70,11 @@ Olympus.Game.prototype = {
         if (this.params != undefined) {
             this.player = new Hero(this.game, this.params.playerX, this.params.playerY);
         } else {
-            this.player = new Hero(this.game, this.game.world.width / 2 + 100, this.game.world.height / 2);
+            this.player = new Hero(this.game, 800, 600);
+            //this.player = new Hero(this.game, this.game.world.width / 2 + 100, this.game.world.height / 2);
         }
-        console.log(this.player);
-        this.game.camera.focusOn(this.player);
-        this.game.camera.follow(this.player);
+
+        this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
         this.enemies.add(this.player);
     },
     addActors: function () {
@@ -91,11 +86,12 @@ Olympus.Game.prototype = {
             for (var i = 0; i < 100; i++) {
 
                 do {
-                    xy = [this.game.world.randomX, this.game.world.randomY];
+                    xy = [Math.ceil(this.game.world.randomX), Math.ceil(this.game.world.randomY)];
                 } while (this.isTileWalkable(xy[0], xy[1]) === false);
 
 
                 var enemyObj = this.enemies.create(xy[0], xy[1], 'enemy');
+                enemyObj.autoCull = true;
                 this.setEnemyProperties(enemyObj, i);
                 this.enemylocations[i] = {x:xy[0], y:xy[1]};
 
@@ -123,21 +119,21 @@ Olympus.Game.prototype = {
     },
     addCollisions: function () {
 
-        collsnObs = this.game.physics.p2.convertTiledCollisionObjects(this.map, 'collision');
-        collsnObs2 = this.game.physics.p2.convertTiledCollisionObjects(this.map, 'collision2');
+        collsnObs = this.game.physics.p2.convertCollisionObjects(this.map.tilemap, 'collision');
+        //collsnObs2 = this.game.physics.p2.convertCollisionObjects(this.map.tilemap, 'collision2');
 
         for (var ob in collsnObs) {
             collsnObs[ob].setCollisionGroup(this.wallsCollisionGroup);
             collsnObs[ob].collides(this.playerCollisionGroup);
         }
 
-        for (var ob2 in collsnObs2) {
-
-            //console.log(ob2);
-            collsnObs2[ob2].setCollisionGroup(this.wallsCollisionGroup);
-            collsnObs2[ob2].collides(this.playerCollisionGroup);
-
-        }
+        //for (var ob2 in collsnObs2) {
+        //
+        //    //console.log(ob2);
+        //    collsnObs2[ob2].setCollisionGroup(this.wallsCollisionGroup);
+        //    collsnObs2[ob2].collides(this.playerCollisionGroup);
+        //
+        //}
 
         this.player.body.collides(this.wallsCollisionGroup);
 
@@ -152,25 +148,32 @@ Olympus.Game.prototype = {
 
     },
     addMap: function () {
-        this.map = this.game.add.tiledmap('game-world');
+        //this.map = this.game.add.tilemap('game-world');
+        this.map = new Olympus.Map.Module(this.game, 'game-world');
+
+        this.modules = {};
+        this.modules['ground_tiles'] = new Olympus.Map.Module(this.game, 'game-world');
+        this.modules['treesv6_0'] = new Olympus.Map.Module(this.game, 'game-world');
+
+        this.map.createLayer('water');
+        layer = this.map.createLayer('ground');
+        this.map.createLayer('trees');
+        this.map.createLayer('collision');
+
+
+        //  This resizes the game world to match the layer dimensions
+        layer.resizeWorld();
+
         this.game.world.setBounds(0, 0, 4096, 4096);
     },
     create: function () {
-
-
         this.game.world.bringToTop(this.enemies);
-
-
     },
     getPlayerTerrainType: function () {
-        terrain = this.map.getTileWorldXY(this.player.x, this.player.y, 32, 32, this.map.currentLayer).properties["terrain-type"];
-        if(terrain === undefined){
-            terrain = "none";
-        }
-        return terrain;
+        return this.getTerrainType(this.player.x, this.player.y);
     },
     getTerrainType: function (x, y) {
-        tile = this.map.getTileWorldXY(x, y, 32, 32, this.map.currentLayer);
+        tile = this.map.tilemap.getTileWorldXY(x, y, 32, 32, this.map.tilemap.currentLayer);
         if(tile != null){
             terrain = tile.properties["terrain-type"];
             if(terrain === undefined){
@@ -183,7 +186,8 @@ Olympus.Game.prototype = {
 
     },
     isTileWalkable: function (x, y) {
-        tile = this.map.getTileWorldXY(x, y, 32, 32, 1);
+        console.log(this.map);
+        tile = this.map.tilemap.getTileWorldXY(x, y, 32, 32, this.map.tilemap.currentLayer);
 
         if(tile != null){
             walkable = tile.properties["walkable"];
@@ -211,9 +215,12 @@ Olympus.Game.prototype = {
         this.enemies.sort('y', Phaser.Group.SORT_ASCENDING);
     },
     update: function () {
-        this.player.move();
-        this.player.body.collides(this.enemyCollisionGroup, this.hitEnemy, this);
-        this.checkPlayerEnemyCollision();
+        if(this.player){
+            this.player.move();
+            this.player.body.collides(this.enemyCollisionGroup, this.hitEnemy, this);
+            this.checkPlayerEnemyCollision();
+        }
+
     },
     setPlayerStats: function (two) {
         this.playerstats.playerstats.terrain = this.getPlayerTerrainType();
@@ -224,7 +231,11 @@ Olympus.Game.prototype = {
     hitEnemy : function(hero, enemy){
         console.log("hitEnemy");
         this.setPlayerStats(enemy);
-        this.game.stateTransition.to('Battle', true, false, {playerX:this.player.x, playerY:this.player.y, playerstats:this.playerstats});
+        this.game.stateTransition.to('Battle', true, false, {
+            playerX:this.player.x,
+            playerY:this.player.y,
+            playerstats:this.playerstats
+        });
     },
     hitWall:function(){
         console.log("wall hit");
@@ -233,7 +244,7 @@ Olympus.Game.prototype = {
         console.log('shutting down');
         //this.coins.destroy();
         this.enemies.destroy();
-        this.map.destroy();
+        this.map.tilemap.destroy();
         this.scoreText.destroy();
         //this.scoreboard.destroy();
         //this.score = 0;
