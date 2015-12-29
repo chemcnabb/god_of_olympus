@@ -12,16 +12,9 @@ Olympus.Map.MAPS = [
     //'area_1'
 ];
 
-
-
 /**
  * Created by knash on 15-03-12.
  */
-
-
-
-
-
 
 //setting game configuration and loading the assets for the loading screen
 Olympus.Boot.prototype = {
@@ -59,9 +52,11 @@ Olympus.Boot.prototype = {
 
 
 
-        //this.game.load.image('buildings', 'assets/images/world_map_tiles/buildings.png');
+        this.game.load.image('buildings', 'assets/images/world_map_tiles/buildings.png');
         //this.game.load.image('trees', 'assets/images/world_map_tiles/trees.png');
         this.game.load.image('treesv6_0', 'assets/images/world_map_tiles/treesv6_0.png');
+        this.game.load.image('tree1', 'assets/images/world_map_tiles/tree1.png');
+        this.game.load.image('tree3', 'assets/images/world_map_tiles/tree3.png');
         this.game.load.image('ground_tiles', 'assets/images/world_map_tiles/ground_tiles.png');
 
         var map;
@@ -72,7 +67,7 @@ Olympus.Boot.prototype = {
     },
     create: function() {
         //loading screen will have a white background
-        //this.game.backgroundColor = '#fff';
+        this.game.backgroundColor = '#fff';
 
         //scaling options
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;

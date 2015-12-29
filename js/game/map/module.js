@@ -53,10 +53,15 @@ Olympus.Map.Module.prototype = {
         var result = [];
         var sprite;
         this.tilemap.objects[layer].forEach(function(element) {
+
+
+
             element.y -= self.tilemap.tileHeight;
             sprite = group.create(element.x + tileX*32, element.y + tileY*32);
-            self.game.physics.arcade.enable(sprite);
-            sprite.body.setSize(element.properties.width, element.properties.height);
+            self.game.physics.p2.enable(sprite);
+            sprite.body.setRectangle(element.properties.width, element.properties.height);
+            //sprite.body.setSize(element.properties.width, element.properties.height);
+
             sprite.body.immovable = true;
             result.push(sprite);
         });

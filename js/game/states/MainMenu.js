@@ -21,10 +21,17 @@ Olympus.MainMenu.prototype = {
     },
 
     create: function () {
+        imageWidth = this.game.cache.getImage('splash').width;
+        imageHeight = this.game.cache.getImage('splash').height;
 
-        this.splash = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'splash');
+        var ratio = Math.min(this.game.width / imageWidth, this.game.height / imageHeight);
+
+        width = ratio*imageWidth;
+        height = ratio*imageHeight;
+
+        this.splash = this.add.sprite(width/2, height/2, 'splash');
         this.splash.anchor.setTo(0.5, 0.5);
-        this.splash.height = window.innerHeight;
+
         this.splash.tint = 0x5a5a5a;
 
         //this.backGround.autoScroll(-100,0);
