@@ -57,6 +57,7 @@ Olympus.Boot.prototype = {
         this.game.load.image('treesv6_0', 'assets/images/world_map_tiles/treesv6_0.png');
         this.game.load.image('tree1', 'assets/images/world_map_tiles/tree1.png');
         this.game.load.image('tree3', 'assets/images/world_map_tiles/tree3.png');
+        this.game.load.image('tree4', 'assets/images/world_map_tiles/tree4.png');
         this.game.load.image('ground_tiles', 'assets/images/world_map_tiles/ground_tiles.png');
 
         var map;

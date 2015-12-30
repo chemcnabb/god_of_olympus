@@ -98,7 +98,9 @@ Olympus.Game.prototype = {
 
                 do {
                     xy = [Math.ceil(this.game.world.randomX), Math.ceil(this.game.world.randomY)];
-                } while (this.isTileWalkable(xy[0], xy[1]) === false);
+                } while (this.isTileWalkable(xy[0], xy[1]) !== "true");
+
+                console.log("ENEMY ADDED:" + i);
 
 
                 var enemyObj = this.enemies.create(xy[0], xy[1], 'enemy');
@@ -176,13 +178,13 @@ Olympus.Game.prototype = {
 
         this.modules = {};
         this.modules['ground_tiles'] = new Olympus.Map.Module(this.game, 'game-world');
-        this.modules['tree1'] = new Olympus.Map.Module(this.game, 'game-world');
 
         this.map.createLayer('water');
         this.map.createLayer('ground');
         this.map.createLayer('collision');
         this.map.createLayer('buildings');
-
+        this.map.tilemap.currentLayer = 1;;
+        //
         this.game.world.setBounds(0, 0, 4096, 4096);
     },
     create: function () {
@@ -210,15 +212,11 @@ Olympus.Game.prototype = {
         tile = this.map.tilemap.getTileWorldXY(x, y, 32, 32, this.map.tilemap.currentLayer);
 
         if(tile != null){
+            console.log(tile.properties["walkable"]);
             walkable = tile.properties["walkable"];
 
-            if(walkable === undefined){
-
-                walkable = false;
-            }
             return walkable;
         }else{
-
             return undefined;
         }
 
