@@ -23,7 +23,7 @@ Olympus.Battle.prototype = {
         this.addBackground();
         this.addEnemies();
         this.addPlayer();
-     
+
 
 
     },
@@ -58,11 +58,10 @@ Olympus.Battle.prototype = {
         this.bg.bringToTop();
     },
     // And finally the method that handels the pause menu
-    unpause:function (event){
-        console.log("unpause event");
-        console.log(this.game.paused);
+    menuSelect:function (event){
+
         // Only act if paused
-        if(this.game.paused){
+
             // Calculate the corners of the menu
             var x1 = this.game.width/2 - 270/2, x2 = this.game.width/2 + 270/2,
                 y1 = this.game.height/2 - 180/2, y2 = this.game.height/2 + 180/2;
@@ -70,7 +69,7 @@ Olympus.Battle.prototype = {
             // Check if the click was inside the menu
             if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
                 // The choicemap is an array that will help us see which item was clicked
-                var choisemap = ['one', 'two', 'three', 'four', 'five', 'six'];
+                var choisemap = ['Abilities', 'Sword', 'Bow', 'Power', 'Magic', 'Examine'];
 
                 // Get menu local coordinates for the click
                 var x = event.x - x1,
@@ -84,36 +83,42 @@ Olympus.Battle.prototype = {
             }
             else{
                 // Remove the menu and the label
-                menu.destroy();
-                choiseLabel.destroy();
+                try{
+                    menu.destroy();
+                    choiseLabel.destroy();
+                }catch(e){
+                    console.log("menu doesnt exist")
+                }
 
-                // Unpause the game
-                this.game.paused = false;
+
+
+
+
             }
-        }
+
+    },
+    showMenu:function (hero) {
+
+        // When the paus button is pressed, we pause the game
+        // Then add the menu
+        menu = that.game.add.sprite(that.game.width/2, that.game.height/2, 'menu');
+        menu.anchor.setTo(0.5, 0.5);
+
+        // And a label to illustrate which menu item was chosen. (This is not necessary)
+        choiseLabel = that.game.add.text(that.game.width/2, that.game.height-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
+        choiseLabel.anchor.setTo(0.5, 0.5);
+
+
     },
     create: function () {
-        var that = this;
+        that = this;
         this.player.scale.setTo(.6);
         this.enemy.scale.setTo(.6);
 
 
 
         this.player.inputEnabled = true;
-        this.player.events.onInputUp.add(function () {
-            // When the paus button is pressed, we pause the game
-            that.game.paused = true;
-            console.log(that.game.width);
-            // Then add the menu
-            menu = that.game.add.sprite(that.game.width/2, that.game.height/2, 'menu');
-            menu.anchor.setTo(0.5, 0.5);
-
-            // And a label to illustrate which menu item was chosen. (This is not necessary)
-            choiseLabel = that.game.add.text(that.game.width/2, that.game.height-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
-            choiseLabel.anchor.setTo(0.5, 0.5);
-
-
-        });
+        this.player.events.onInputUp.add(this.showMenu);
 
         // Create a label to use as a button
         pause_label = this.game.add.text(this.game.width - 100, 20, 'Pause', { font: '24px Arial', fill: '#fff' });
@@ -132,10 +137,8 @@ Olympus.Battle.prototype = {
 
 
         });
-
-
         // Add a input listener that can help us return from being paused
-        this.game.input.onDown.add(this.unpause, this);
+        this.game.input.onDown.add(this.menuSelect, this);
         this.cursors = this.game.input.keyboard.createCursorKeys();
     },
     update: function () {
