@@ -171,6 +171,10 @@ Olympus.Game.prototype = {
         this.scoreText = this.game.add.bitmapText(10, 10, 'Diogenes', 'Score: ' + this.score, 24);
         this.scoreText.fixedToCamera = true;
 
+        //var healthbar = this.game.add.sprite(0,0,'healthbar');
+        //healthbar.cropEnabled = true;
+        //healthbar.crop.width = (character.health / character.maxHealth) * healthbar.width
+
 
     },
     addMap: function () {
@@ -181,6 +185,7 @@ Olympus.Game.prototype = {
 
         this.map.createLayer('water');
         this.map.createLayer('ground');
+        this.map.createLayer('cliffs');
         this.map.createLayer('collision');
         this.map.createLayer('buildings');
         this.map.tilemap.currentLayer = 1;;

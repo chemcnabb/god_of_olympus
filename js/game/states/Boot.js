@@ -49,11 +49,11 @@ Olympus.Boot.prototype = {
 
 
         //this.game.load.tilemap('game-world', 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
-
+        this.game.load.image('menu', 'assets/images/buttons/number-buttons-90x90.png', 270, 180);
 
 
         this.game.load.image('buildings', 'assets/images/world_map_tiles/buildings.png');
-        //this.game.load.image('trees', 'assets/images/world_map_tiles/trees.png');
+        this.game.load.image('cliffs', 'assets/images/world_map_tiles/Cliff_tileset.png');
         this.game.load.image('treesv6_0', 'assets/images/world_map_tiles/treesv6_0.png');
         this.game.load.image('tree1', 'assets/images/world_map_tiles/tree1.png');
         this.game.load.image('tree3', 'assets/images/world_map_tiles/tree3.png');
