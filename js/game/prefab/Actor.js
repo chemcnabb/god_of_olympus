@@ -3,8 +3,7 @@ var Actor = function(game, x, y, sprite) {
     this.direction = "down";
     this.is_moving = false;
     Phaser.Sprite.call(this, game, x, y, sprite);
-    this.game.physics.p2.enable(this, true);
-    this.body.fixedRotation = true; // no rotation
+
 
     this.frame = 0;
     this.anchor.setTo(0.5);
@@ -22,8 +21,8 @@ var Actor = function(game, x, y, sprite) {
 
 
 
-    //this.body.setSize(this.width, 15, 0, 0);
-    this.body.setRectangle(this.width-8, 15, 0, (this.height/2)-7.5);
+
+
 
 
 

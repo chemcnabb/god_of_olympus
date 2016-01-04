@@ -18,7 +18,7 @@ Olympus.Preload.prototype = {
 
 
         // Load all of our maps and their components.
-        this.loadTileMaps();
+        //this.loadTileMaps();
 
         this.load.onLoadComplete.add(this.onLoadComplete, this);
 

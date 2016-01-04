@@ -1,13 +1,20 @@
 
 Hero = function (game, x, y) {
     Actor.call(this, game, x, y, 'hero');
+
+
+
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
 };
 
 Hero.prototype = Object.create(Actor.prototype);
 Hero.prototype.constructor = Hero;
-
+Hero.prototype.enablePhysics = function(){
+    this.game.physics.p2.enable(this, true);
+    this.body.fixedRotation = true; // no rotation
+    this.body.setRectangle(this.width-8, 15, 0, (this.height/2)-7.5);
+}
 Hero.prototype.move = function () {
 
     //this.is_moving = false;

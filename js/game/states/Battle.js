@@ -1,25 +1,20 @@
 var Olympus = Olympus || {};
 
 Olympus.Battle = function (game) {
-
-    this.player = null;
-    this.music = null;
-    this.map = null;
-    this.layer = null;
-    this.background = null;
-    this.terrain = null;
-
+    this.player_moves = [];
+    this.player_ready = false;
+    this.active_player = null;
 };
 
 Olympus.Battle.prototype = {
     init:function(params){
 
 
-
+        this.menu_items = ['Power', 'Examine', 'Bow', 'Abilities', 'Magic', 'Sword'];
         this.params = params;
         this.offsetY = this.game.width * .25;
-        //console.log(this.offsetY);
-        this.terrain = this.params.playerstats.playerstats.terrain;
+        //this.game.physics.startSystem(Phaser.Physics.P2JS);
+        this.terrain = Olympus.PlayerStats.terrain;
         this.addBackground();
         this.addEnemies();
         this.addPlayer();
@@ -28,19 +23,15 @@ Olympus.Battle.prototype = {
 
     },
     addEnemies: function () {
-        this.enemy = new Enemy(this.game, this.game.width - this.offsetY, 350, this.params.playerstats.currentenemy.key);
+        this.enemy = new Enemy(this.game, this.game.width - this.offsetY, 350, "enemy");
+        Olympus.PlayerStats.setPlayerProperties(this.enemy, parseInt(Olympus.PlayerStats.currentenemy.name.replace("enemy_", "")));
+
         this.enemy.direction = "left";
-        this.enemy.body.fixedRotation = true;
+        //this.enemy.body.fixedRotation = true;
+        //this.enemy.body.setZeroVelocity();
         this.game.add.existing(this.enemy);
         this.enemy.bringToTop();
-        //this.enemies = this.game.add.group();
-        //
-        //for (var i = 0; i < 16; i++)
-        //{
-        //    //  This creates a new Phaser.Sprite instance within the group
-        //    //  It will be randomly placed within the world and use the 'baddie' image to display
-        //this.enemies.create(360 + Math.random() * 200, 120 + Math.random() * 200, this.params.playerstats.currentenemy.key);
-        //}
+
     },
     addPlayer: function () {
         this.player = new Hero(this.game, this.offsetY, 350);
@@ -51,107 +42,100 @@ Olympus.Battle.prototype = {
     addBackground: function () {
         width = Math.floor((window.innerWidth/2)/100)*100;
         height = Math.floor((window.innerHeight/2)/100)*100;
-        this.bg = this.add.sprite(width, height, "battle-"+this.terrain);
+        this.bg = this.add.sprite(width, height, "battle-grass");
         this.bg.anchor.setTo(0.5, 0.5);
         this.bg.scale.x = 6;
         this.bg.scale.y = 6;
         this.bg.bringToTop();
     },
-    // And finally the method that handels the pause menu
-    menuSelect:function (event){
+    getCircularX: function (x, radius, index, menu_items) {
+        return x + radius * Math.cos(2 * Math.PI * index / menu_items.length);
+    },
+    getCircularY: function (y, radius, index, menu_items) {
+        return y + radius * Math.sin(2 * Math.PI * index / menu_items.length);
+    },
+    menuClick: function(){
 
-        // Only act if paused
+        //this.playerMenu.destroy();
+    },
+    buttonClick: function(){
 
-            // Calculate the corners of the menu
-            var x1 = this.game.width/2 - 270/2, x2 = this.game.width/2 + 270/2,
-                y1 = this.game.height/2 - 180/2, y2 = this.game.height/2 + 180/2;
+        this.game.state.states.Battle.player_ready = true;
+        this.game.state.states.Battle.player_moves.push(this.action);
 
-            // Check if the click was inside the menu
-            if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
-                // The choicemap is an array that will help us see which item was clicked
-                var choisemap = ['Abilities', 'Sword', 'Bow', 'Power', 'Magic', 'Examine'];
-
-                // Get menu local coordinates for the click
-                var x = event.x - x1,
-                    y = event.y - y1;
-
-                // Calculate the choice
-                var choise = Math.floor(x / 90) + 3*Math.floor(y / 90);
-
-                // Display the choice
-                choiseLabel.text = 'You chose menu item: ' + choisemap[choise];
-            }
-            else{
-                // Remove the menu and the label
-                try{
-                    menu.destroy();
-                    choiseLabel.destroy();
-                }catch(e){
-                    console.log("menu doesnt exist")
-                }
-
-
-
-
-
-            }
+        this.game.state.states.Battle.playerMenu.destroy();
+        this.destroy();
 
     },
     showMenu:function (hero) {
+        this.playerMenu = this.game.add.group();
+        this.game.world.bringToTop(this.playerMenu);
 
-        // When the paus button is pressed, we pause the game
-        // Then add the menu
-        menu = that.game.add.sprite(that.game.width/2, that.game.height/2, 'menu');
-        menu.anchor.setTo(0.5, 0.5);
+        var originX =hero.x;
+        var originY = hero.y-(height/3);
+        var innerCircleRadius = 140;
 
-        // And a label to illustrate which menu item was chosen. (This is not necessary)
-        choiseLabel = that.game.add.text(that.game.width/2, that.game.height-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
-        choiseLabel.anchor.setTo(0.5, 0.5);
 
+        for(var i = 0; i < this.menu_items.length; i++) {
+            var chairOriginX = this.getCircularX(originX, innerCircleRadius, i, this.menu_items);
+            var chairOriginY = this.getCircularY(originY, innerCircleRadius, i, this.menu_items);
+            var chairWidth = 60;
+
+            var button = new LabelButton(this.game, originX, originY, "button", this.menu_items[i], this.menuClick, this);
+            button.alpha = 0;
+            button.onInputUp.add(this.buttonClick, button);
+            button.action = this.menu_items[i];
+
+
+            this.game.add.tween(button).to({x:chairOriginX, y:chairOriginY, alpha:1}, 500, Phaser.Easing.Circular.InOut, true);
+            this.playerMenu.add(button);
+        }
 
     },
+    performAction: function(){
+        console.log(this.player.x);
+        originX = this.player.x;
+        originY = this.player.y;
+        for (action in this.player_moves){
+
+            if(this.player_moves[action] == "Sword"){
+                console.log(this.player_moves[action]);
+                this.game.add.tween(this.player).to( { x: this.enemy.x - this.enemy.width }, 500, "Quart.easeOut", true).onComplete.add(this.tweenComplete, this);;
+
+            }
+
+
+
+
+        }
+
+
+
+        this.player_ready = false;
+        this.player_moves = [];
+    },
+    tweenComplete:function(){
+        console.log("tween complete");
+        this.game.add.tween(this.player).to( { x: originX }, 100, "Quart.easeOut", true);
+    },
     create: function () {
-        that = this;
         this.player.scale.setTo(.6);
         this.enemy.scale.setTo(.6);
 
-
-
         this.player.inputEnabled = true;
-        this.player.events.onInputUp.add(this.showMenu);
+        this.player.events.onInputUp.add(this.showMenu, this);
 
-        // Create a label to use as a button
-        pause_label = this.game.add.text(this.game.width - 100, 20, 'Pause', { font: '24px Arial', fill: '#fff' });
-        pause_label.inputEnabled = true;
-        pause_label.events.onInputUp.add(function () {
-                // When the paus button is pressed, we pause the game
-            that.game.paused = true;
-                console.log(that.game);
-                // Then add the menu
-                menu = that.game.add.sprite(that.game.width/2, that.game.height/2, 'menu');
-                menu.anchor.setTo(0.5, 0.5);
-
-                // And a label to illustrate which menu item was chosen. (This is not necessary)
-                choiseLabel = that.game.add.text(that.game.width/2, that.game.height-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
-                choiseLabel.anchor.setTo(0.5, 0.5);
-
-
-        });
-        // Add a input listener that can help us return from being paused
-        this.game.input.onDown.add(this.menuSelect, this);
         this.cursors = this.game.input.keyboard.createCursorKeys();
     },
     update: function () {
-        //this.params.playerstats.playerstats.player.HP += 1;
 
-        //this.enemy.direction = this.params.playerstats.currentenemy.battleDirection;
-        //this.enemy.move();
-        //this.player.move();
-        //console.log(this.player.x);
-        this.params.playerstats.playerstats.HP+=1;
+        this.active_player = this.player;
+        if(this.player_ready == true){
+            this.performAction();
+        }
         if(this.cursors.up.isDown){
             //this.game.state.start('Game', true, false, this.params);
-            this.game.stateTransition.to('Game', true, false, this.params);
+            this.game.stateTransition.to('Game', true, false);
         }
 
 
@@ -160,6 +144,11 @@ Olympus.Battle.prototype = {
         this.player.destroy();
         this.enemy.destroy();
         this.bg.destroy();
+        console.log(Olympus.PlayerStats.enemylocations);
+        console.log(Olympus.PlayerStats.currentenemy.currentindex);
+        delete Olympus.PlayerStats.enemylocations[Olympus.PlayerStats.currentenemy.currentindex];
+        console.log(Olympus.PlayerStats.enemylocations);
+
 
     }
 
