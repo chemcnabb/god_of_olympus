@@ -103,10 +103,6 @@ Olympus.Battle.prototype = {
                 this.game.add.tween(this.player).to( { x: this.enemy.x - this.enemy.width }, 500, "Quart.easeOut", true).onComplete.add(this.tweenComplete, this);;
 
             }
-
-
-
-
         }
 
 

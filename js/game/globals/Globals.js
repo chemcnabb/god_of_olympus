@@ -46,8 +46,29 @@ Olympus.PlayerStats = function(){
             maxAtk: 5,//Weapon’s highest attack,
             StatsMod:3 ,//Stats of player character that this weapon modifies. Not all weapons have this stat so this may empty.
             Element: 3,//Weapon’s element, this may empty.
-            }
-    }
+        }
+    };
+
+    this.armor_attributes = {
+        StatsMod:3 ,//Stats of player character that this weapon modifies. Not all weapons have this stat so this may empty.
+        Element: 3,//Weapon’s element, this may empty.
+
+    };
+        this.rand_range = function(min, max){
+
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+
+        };
+    this.weapon_damage = function(attacker, defender){
+        return Math.ceil(attacker.attributes.ATK + this.rand_range(attacker.weapon_attributes.minAtk, attacker.weapon_attributes.maxAtk)) - (defender.attributes.DEF + this.rand_range(defender.weapon_attributes.minDef, defender.weapon_attributes.maxDef));
+    };
+    this.magical_damage = function(attacker, defender){
+        return Math.ceil((attacker.attributes.INT + this.rand_range(attacker.weapon_attributes.minMag, attacker.weapon_attributes.maxMag)) - defender.attributes.RES);
+    };
+    this.hit_success = function(attacker, defender){
+        var probability = (attacker.attrbitues.ACC * this.rand_range(0, 6))-(defender.attrbitues.EVA * this.rand_range(0, 6));
+        return probability>=0;
+    },
     this.currentenemyindex = null;
 
 
