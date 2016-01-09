@@ -1,7 +1,7 @@
 var Olympus = Olympus || {};
-Olympus.PlayerStats = function(){
+Olympus.Globals = function(){
     this.terrain = "";
-   this.enemylocations = {};
+    this.actorlocations = {};
     this.playerX = 200;
     this.playerY = 100;
 
@@ -10,7 +10,7 @@ Olympus.PlayerStats = function(){
         HP: 100,
 
         //The character’s current health points, if this goes down to zero the character dies
-        currentHP: 0,
+        currentHP: 75,
 
         //Spirit points, needed to use skills/magics, if SP is restored the value cannot exceed this points
         SP: 0,
@@ -25,9 +25,9 @@ Olympus.PlayerStats = function(){
         DEF: 0,
 
         //Accuracy. Determines the accuracy of attacks, whether it’s physical or magical.
-        ACC: 0,
+        ACC: 2,
         //Evasion. Determines whether the character is able to evade enemy’s attacks.
-        EVA: 0,
+        EVA: 5,
 
         //Intelligence. Determines magical attack power.
         INT: 0,
@@ -39,36 +39,24 @@ Olympus.PlayerStats = function(){
         LUK: 0
     };
 
-    this.weapon_sttributes =
+    this.weapon_attributes =
     {
         "Sword" : {
             minAtk: 2,//Weapon’s lowest attack,
-            maxAtk: 5,//Weapon’s highest attack,
+            maxAtk: 7,//Weapon’s highest attack,
+            minDef:0,
+            maxDef: 6,
             StatsMod:3 ,//Stats of player character that this weapon modifies. Not all weapons have this stat so this may empty.
             Element: 3,//Weapon’s element, this may empty.
         }
-    };
+    }
 
     this.armor_attributes = {
         StatsMod:3 ,//Stats of player character that this weapon modifies. Not all weapons have this stat so this may empty.
         Element: 3,//Weapon’s element, this may empty.
 
     };
-        this.rand_range = function(min, max){
 
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-
-        };
-    this.weapon_damage = function(attacker, defender){
-        return Math.ceil(attacker.attributes.ATK + this.rand_range(attacker.weapon_attributes.minAtk, attacker.weapon_attributes.maxAtk)) - (defender.attributes.DEF + this.rand_range(defender.weapon_attributes.minDef, defender.weapon_attributes.maxDef));
-    };
-    this.magical_damage = function(attacker, defender){
-        return Math.ceil((attacker.attributes.INT + this.rand_range(attacker.weapon_attributes.minMag, attacker.weapon_attributes.maxMag)) - defender.attributes.RES);
-    };
-    this.hit_success = function(attacker, defender){
-        var probability = (attacker.attrbitues.ACC * this.rand_range(0, 6))-(defender.attrbitues.EVA * this.rand_range(0, 6));
-        return probability>=0;
-    },
     this.currentenemyindex = null;
 
 
@@ -76,8 +64,33 @@ Olympus.PlayerStats = function(){
 };
 //Olympus.Tools.prototype = Object.create(Phaser.Sprite.prototype);
 
-Olympus.PlayerStats.prototype = {
-
+Olympus.Globals.prototype = {
+    randRange : function(min, max){
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    calculateWeaponDamage: function(attacker, defender, weapon){
+        console.log("calculate weapon damage");
+        attack = attacker.attributes.ATK + this.randRange(attacker.weapons.weapons[weapon].minAtk,
+                attacker.weapons.weapons[weapon].maxAtk);
+        defend = defender.attributes.DEF + this.randRange(defender.weapons.weapons[weapon].minDef,
+                defender.weapons.weapons[weapon].maxDef);
+        var damage = parseInt(Math.ceil(attack - defend));
+        if (damage<=0){
+            damage = 0;
+        }
+        console.log("DAMAGE: " + damage);
+        return damage;
+    },
+    magicalDamage: function(attacker, defender){
+        return Math.ceil((attacker.attributes.INT + this.randRange(attacker.weapons.weapons.minMag,
+                attacker.weapons.weapons.maxMag)) - defender.attributes.RES);
+    },
+    calculateHitProbability : function(attacker, defender){
+        //console.log(attacker);
+        var probability = (attacker.attributes.ACC * this.randRange(0, 6))-(defender.attributes.EVA * this.randRange(0, 6));
+        console.log(probability);
+        return probability;
+    },
     getPlayerTerrainType : function(){
         return;
     },
@@ -89,16 +102,20 @@ Olympus.PlayerStats.prototype = {
     setPlayerProperties: function(player, index){
         player.name = "enemy_" + index;
         player.currentindex = index;
+
         player.scale.set(.2, .2);
+
         player.autoCull = true;
-        player.enableBody = true;
-        player.physicsBodyType = Phaser.Physics.P2JS;
-        player.attributes = this.attributes;
-        this.enemylocations[index] = player;
+        //player.enableBody = true;
+        //player.physicsBodyType = Phaser.Physics.P2JS;
+
+
+
+        this.actorlocations[index] = player;
+
         return player;
     },
 
 
 };
 
-Olympus.PlayerStats = new Olympus.PlayerStats();

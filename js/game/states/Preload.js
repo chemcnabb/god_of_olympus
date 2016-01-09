@@ -27,7 +27,7 @@ Olympus.Preload.prototype = {
     },
     create: function() {
         this.preloadBar.cropEnabled = false;
-        this.state.start('MainMenu');
+        this.state.start('Battle');
 //        this.state.start('Game');
     },
     // Many of the maps use the same tile images. We create a map of all these images

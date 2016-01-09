@@ -34,6 +34,8 @@ Olympus.Boot.prototype = {
             }
         });
 
+        this.game.globals = new Olympus.Globals();
+
     },
     preload: function() {
 
@@ -52,6 +54,7 @@ Olympus.Boot.prototype = {
 
         //this.game.load.tilemap('game-world', 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image('menu', 'assets/images/buttons/number-buttons-90x90.png', 270, 180);
+        this.game.load.image('healthbar', 'assets/images/healthbar.png', 300, 90);
 
 
         this.game.load.image('buildings', 'assets/images/world_map_tiles/buildings.png');

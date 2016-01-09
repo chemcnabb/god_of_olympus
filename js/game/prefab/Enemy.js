@@ -1,7 +1,7 @@
 
 Enemy = function (game, x, y, key) {
     Actor.call(this, game, x, y, key);
-    this.attributes = Olympus.PlayerStats.attributes;
+    this.attributes = Olympus.Globals.attributes;
 
     this.hitArea = new Phaser.Rectangle(0, 0, 20, 20);
 

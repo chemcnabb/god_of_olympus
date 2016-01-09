@@ -21,7 +21,7 @@ Olympus.Game.prototype = {
 
 
 
-        this.enemylocations = {};
+        this.actorlocations = {};
         this.currentenemyindex = null;
 
 
@@ -60,9 +60,11 @@ Olympus.Game.prototype = {
     setEnemyProperties: function (enemy, index) {
 
 
+        enemy = this.game.globals.setPlayerProperties(enemy, index);
 
-
-        enemy = Olympus.PlayerStats.setPlayerProperties(enemy, index);
+        enemy.attributes = enemy.attributes || new Olympus.ActorAttributes();
+        enemy.weapons =  enemy.weapons || new Olympus.Weapons();
+        enemy.armor = enemy.armor || new Olympus.Armor();
 
         enemy.body.fixedRotation = true; // no rotation
         enemy.body.setRectangle(enemy.width - 8, 15, 0, (enemy.height / 2) - 7.5);
@@ -76,17 +78,17 @@ Olympus.Game.prototype = {
 
 
 
-        this.player = new Hero(this.game, Olympus.PlayerStats.playerX, Olympus.PlayerStats.playerY);
+        this.player = new Hero(this.game, this.game.globals.playerX, this.game.globals.playerY);
         this.player.enablePhysics();
         //this.game.physics.p2.enable(this, true);
         this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
         this.world_objects.add(this.player);
     },
     addActors: function () {
-        console.log(Olympus.PlayerStats);
+        //console.log(this.game.globals);
 
         // TODO: add array to globals to re init after battle
-        if(Object.keys(Olympus.PlayerStats.enemylocations).length == 0) {
+        if(Object.keys(this.game.globals.actorlocations).length == 0) {
 
             for (var i = 0; i < 100; i++) {
 
@@ -97,7 +99,7 @@ Olympus.Game.prototype = {
 
 
 
-                    console.log("ENEMY ADDED:" + i);
+                   // console.log("ENEMY ADDED:" + i);
                     var enemyObj = this.enemies.create(xy[0], xy[1], 'enemy');
                     //this.game.physics.p2.enable(enemyObj, true);
                     enemyObj = this.setEnemyProperties(enemyObj, i);
@@ -110,11 +112,11 @@ Olympus.Game.prototype = {
             }
 
         }else{
-            //console.log(this.params.playerstats.enemylocations);
+            //console.log(this.params.playerstats.actorlocations);
             //console.log(this.params.playerstats.currentenemyindex);
             // todo: CHECK IF ENEMY IS DEAD
 
-            for(enemylocationindex in Olympus.PlayerStats.enemylocations){
+            for(enemylocationindex in this.game.globals.actorlocations){
 
 
 
@@ -122,7 +124,7 @@ Olympus.Game.prototype = {
 
 
 
-                        enemylocation = Olympus.PlayerStats.enemylocations[enemylocationindex];
+                        enemylocation = this.game.globals.actorlocations[enemylocationindex];
 
                        var enemyObj = this.enemies.create(enemylocation.x, enemylocation.y, 'enemy');
                        enemyObj = this.setEnemyProperties(enemyObj, enemylocationindex);
@@ -181,9 +183,9 @@ Olympus.Game.prototype = {
         this.scoreText = this.game.add.bitmapText(10, 10, 'Diogenes', 'Score: ' + this.score, 24);
         this.scoreText.fixedToCamera = true;
 
-        //var healthbar = this.game.add.sprite(0,0,'healthbar');
-        //healthbar.cropEnabled = true;
-        //healthbar.crop.width = (character.health / character.maxHealth) * healthbar.width
+        //var player_health = this.game.add.sprite(0,0,'player_health');
+        //player_health.cropEnabled = true;
+        //player_health.crop.width = (character.health / character.maxHealth) * player_health.width
 
 
     },
@@ -260,8 +262,8 @@ Olympus.Game.prototype = {
     update: function () {
         if(this.player){
             this.player.move();
-            Olympus.PlayerStats.playerX = this.player.x;
-            Olympus.PlayerStats.playerY = this.player.y;
+            this.game.globals.playerX = this.player.x;
+            this.game.globals.playerY = this.player.y;
 
             this.player.body.collides(this.enemyCollisionGroup, this.hitEnemy, this);
 
@@ -275,7 +277,7 @@ Olympus.Game.prototype = {
         console.log("hitEnemy");
 
 
-        Olympus.PlayerStats.currentenemy = enemy.sprite;
+        this.game.globals.currentenemy = enemy.sprite;
         this.game.stateTransition.to('Battle', true, false);
     },
     hitWall:function(){
