@@ -33,7 +33,7 @@ Actor.prototype = Object.create(Phaser.Sprite.prototype);
 Actor.prototype.update = function(){
     //this.body.velocity.y = 0;
     //this.body.velocity.x = 0;
-    this.animations.play(this.direction);
+    //this.animations.play(this.direction);
 //    if(this.alive && this.is_moving == true) {
 //        //player movement
 //

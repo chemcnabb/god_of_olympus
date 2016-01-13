@@ -74,6 +74,7 @@ Olympus.Globals.prototype = {
                 attacker.weapons.weapons[weapon].maxAtk);
         defend = defender.attributes.DEF + this.randRange(defender.weapons.weapons[weapon].minDef,
                 defender.weapons.weapons[weapon].maxDef);
+
         var damage = parseInt(Math.ceil(attack - defend));
         if (damage<=0){
             damage = 0;
@@ -88,8 +89,7 @@ Olympus.Globals.prototype = {
     calculateHitProbability : function(attacker, defender){
         //console.log(attacker);
         var probability = (attacker.attributes.ACC * this.randRange(0, 6))-(defender.attributes.EVA * this.randRange(0, 6));
-        console.log(probability);
-        return probability;
+        return probability + 10;
     },
     getPlayerTerrainType : function(){
         return;

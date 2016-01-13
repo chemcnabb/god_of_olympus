@@ -1044,7 +1044,7 @@
    <polyline points="0,0 -17,-42 -33,-66 -48,-94 -44,-115 -12,-151 -16,-194 -28,-193 -40,-216 -52,-248 -66,-257 -300,-254 -300,93 4,94 0,-3"/>
   </object>
  </objectgroup>
- <objectgroup name="stumps">
+ <objectgroup name="stumps" visible="0">
   <object id="95" gid="876" x="480" y="576" width="32" height="32">
    <properties>
     <property name="tiletype" value="tree1"/>

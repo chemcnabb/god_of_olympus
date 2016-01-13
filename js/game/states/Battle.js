@@ -5,7 +5,10 @@ Olympus.Battle = function (game) {
     this.round_ready = false;
     this.active_player = null;
     this.menu_items = ['Power', 'Examine', 'Bow', 'Abilities', 'Magic', 'Sword'];
-
+    this.safetyOffset = 100;
+    this.menu_open = false;
+    this.performing = false;
+    this.actors = [];
 
 };
 
@@ -21,27 +24,29 @@ Olympus.Battle.prototype = {
         this.addEnemies();
         this.addPlayer();
 
-        this.player_health = this.addHealthBar(0, 0);
-        this.enemy_health = this.addHealthBar(this.game.width - 300, 0);
 
-        console.log(this.enemy_health);
+
+
+
 
 
     },
     addHealthBar: function (barX, barY) {
-        console.log("bar xy: " + barX + ", " + barY);
+        // the bar itself
+        bar = this.add.bitmapData(128, 8);
 
-        var bar = this.game.add.sprite(barX, barY, 'healthbar');
-        bar.cropEnabled = true;
+        this.game.add.sprite(barX, barY, bar);
 
-        var barCropRect = new Phaser.Rectangle(barX, barY, bar.width, bar.height);
-        bar.crop(barCropRect, false);
-        bar.barCropRect = barCropRect;
+        bar.barProgress = 128;
 
         return bar;
     },
     addEnemies: function () {
-        this.enemy = new Enemy(this.game, this.game.width - this.offsetY, 350, "enemy");
+        this.enemy = new Enemy(this.game, this.game.width - this.safetyOffset, this.game.height - this.safetyOffset, "enemy");
+        this.enemy.y = this.enemy.y - this.enemy.height+60;
+        this.enemy.x = this.enemy.x - this.enemy.width;
+
+        this.enemy.health = this.addHealthBar(this.game.width - 128, 0);
 
         var currentenemy = 0;
         if (this.game.globals.currentenemy) {
@@ -57,10 +62,15 @@ Olympus.Battle.prototype = {
         this.enemy.direction = "left";
         this.game.add.existing(this.enemy);
         this.enemy.bringToTop();
+        this.actors.push(this.enemy);
 
     },
     addPlayer: function () {
-        this.player = new Hero(this.game, this.offsetY, 350);
+        this.player = new Hero(this.game, this.safetyOffset, this.game.height - this.safetyOffset);
+        this.player.y = this.player.y - this.player.height;
+        this.player.x = this.player.x + this.player.width*2;
+
+        this.player.health = this.addHealthBar(0, 0);
 
         this.player.attributes = this.player.attributes || new Olympus.ActorAttributes();
         this.player.weapons = this.player.weapons || new Olympus.Weapons();
@@ -70,16 +80,18 @@ Olympus.Battle.prototype = {
 
         this.game.add.existing(this.player);
         this.player.bringToTop();
+
+        this.actors.push(this.player);
     },
     addBackground: function () {
         width = Math.floor((window.innerWidth / 2) / 100) * 100;
         height = Math.floor((window.innerHeight / 2) / 100) * 100;
 
-        this.bg = this.add.sprite(width, height, "battle-grass");
-        this.bg.anchor.setTo(0.5, 0.5);
+        this.bg = this.game.add.sprite(0, 0, "battle-grass");
+        //this.bg.anchor.setTo(0.5, 0.5);
 
-        this.bg.scale.x = 6;
-        this.bg.scale.y = 6;
+        //this.bg.scale.x = 6;
+        //this.bg.scale.y = 6;
 
         this.bg.bringToTop();
     },
@@ -93,54 +105,68 @@ Olympus.Battle.prototype = {
 
         //this.playerMenu.destroy();
     },
+    enemyMoveChoice: function(enemy){
+        this.game.time.events.add(Phaser.Timer.SECOND, (function() {
+            this.round_ready = true;
+            this.moves_this_turn.push("Sword");
+        }), this).autoDestroy = true;
+
+    },
     buttonClick: function () {
 
         this.game.state.states.Battle.round_ready = true;
+        this.game.state.states.Battle.menu_open = false;
         this.game.state.states.Battle.moves_this_turn.push(this.action);
-
         this.game.state.states.Battle.playerMenu.destroy();
-        this.destroy();
+        //this.destroy();
 
     },
     showMenu: function (hero) {
-        this.playerMenu = this.game.add.group();
-        this.game.world.bringToTop(this.playerMenu);
+        if(this.menu_open == false) {
 
-        var originX = hero.x;
-        var originY = hero.y - (height / 3);
-        var innerCircleRadius = 140;
+            this.menu_open = true;
+
+            this.playerMenu = this.game.add.group();
+            this.game.world.bringToTop(this.playerMenu);
+
+            var originX = hero.x;
+            var originY = hero.y - (height / 3);
+            var innerCircleRadius = 140;
 
 
-        for (var i = 0; i < this.menu_items.length; i++) {
+            for (var i = 0; i < this.menu_items.length; i++) {
 
-            var chairOriginX = this.getCircularX(originX, innerCircleRadius, i, this.menu_items);
-            var chairOriginY = this.getCircularY(originY, innerCircleRadius, i, this.menu_items);
+                var chairOriginX = this.getCircularX(originX, innerCircleRadius, i, this.menu_items);
+                var chairOriginY = this.getCircularY(originY, innerCircleRadius, i, this.menu_items);
 
-            var chairWidth = 60;
+                var chairWidth = 69;
 
-            var button = new LabelButton(this.game, originX, originY, "button", this.menu_items[i], this.menuClick, this);
-            button.alpha = 0;
-            button.onInputUp.add(this.buttonClick, button);
-            button.action = this.menu_items[i];
+                var button = new LabelButton("menu_" + this.menu_items[i].toLowerCase(), this.game, originX, originY, "button", this.menu_items[i], this.menuClick, this);
+                button.alpha = 0;
+                button.onInputUp.add(this.buttonClick, button);
+                button.action = this.menu_items[i];
 
-            this.game.add.tween(button).to({
-                x: chairOriginX,
-                y: chairOriginY,
-                alpha: 1
-            }, 500, Phaser.Easing.Circular.InOut, true);
-            this.playerMenu.add(button);
+                this.game.add.tween(button).to({
+                    x: chairOriginX,
+                    y: chairOriginY,
+                    alpha: 1
+                }, 500, Phaser.Easing.Circular.InOut, true);
+
+                this.playerMenu.add(button);
+            }
         }
 
     },
     showActorMessage: function (defender, message) {
+
         var style = {
-            font: "32px Arial",
+            font: "32px Diogenes",
             fill: "#ff0044",
             wordWrap: true,
             wordWrapWidth: this.enemy.width,
             align: "center"
         };
-        var text = this.game.add.text(defender.x, defender.y - (defender.height - 50), message, style);
+        var text = this.game.add.text(defender.x, defender.y - (defender.height/2), message, style);
         text.anchor.set(0.5);
         text.bringToTop();
 
@@ -149,20 +175,7 @@ Olympus.Battle.prototype = {
             alpha: 0
         }, 2000, Phaser.Easing.Linear.None, true).onComplete.add(text.destroy, text);
     },
-
     performAction: function (actors) {
-
-
-
-
-
-            this.flash = this.game.add.graphics(0, 0);
-            this.flash.beginFill(0xffffff, 1);
-            this.flash.drawRect(0, 0, this.game.width, this.game.height);
-            this.flash.endFill();
-            this.flash.alpha = 0;
-
-
 
             var defender = actors[1];
             var defenderOriginX = defender.x;
@@ -172,74 +185,86 @@ Olympus.Battle.prototype = {
 
 
 
+            if(this.performing == false) {
+
+                this.performing = true;
+                for (var action in this.moves_this_turn) {
+
+                    var attacker_anim = this.game.add.tween(attacker);
+                    var defender_anim = this.game.add.tween(defender);
+
+                    if (this.moves_this_turn[action] == "Sword") {
 
 
-            for (action in this.moves_this_turn) {
-                var actions_array = [];
-                var attacker_anim = this.game.add.tween(attacker);
-                var defender_anim = this.game.add.tween(defender);
-                if (this.moves_this_turn[action] == "Sword") {
+                        attacker_anim.to({x: defender.x - defender.width/2}, 1000, Phaser.Easing.Linear.None, false);
 
 
-                    attacker_anim.to({x: defender.x - defender.width}, 500, "Quart.easeOut", false);
+                        var probability_to_hit = parseInt(this.game.globals.calculateHitProbability(attacker, defender));
+                        var message = '';
+
+                        var damage = this.game.globals.calculateWeaponDamage(attacker, defender, this.moves_this_turn[action]);
+
+                        if (probability_to_hit < 0) {
+                            //means the defender has higher stats for luck
+                            message = "DODGE!";
+                            defender_anim.to({x: defender.x + defender.width/2}, 500, "Quart.easeOut", false);
+                            defender_anim.to({x: defenderOriginX}, 500, "Quart.easeOut", false);
+                        }
+                        else if (probability_to_hit == 0) {
+                            message = "MISS!";
+                        }
+                        else if (probability_to_hit > 0) {
+                            message = "HIT! " + damage;
+                            defender.attributes.currentHP -= damage;
+                            defender_anim.to({alpha: 1, delay:1000}, 1, Phaser.Easing.Cubic.In);
+                            defender_anim.to({alpha: 0, delay:1000}, 100, Phaser.Easing.Cubic.In);
+                            defender_anim.to({alpha: 1, delay:1000}, 1, Phaser.Easing.Cubic.In);
+                            defender_anim.to({alpha: 0, delay:1000}, 100, Phaser.Easing.Cubic.In);
+                            defender_anim.to({alpha: 1, delay:1000}, 1, Phaser.Easing.Cubic.In);
+
+                            this.game.add.tween(defender.health).to({barProgress: defender.health.barProgress -= damage}, 2000, null, true);
+                        }
+
+                        attacker_anim.to({x: attackerOriginX}, 100, "Quart.easeOut", false).onComplete.add(this.tweenComplete, this);
+
+                        attacker_anim.start();
+                        try{
+                            attacker.animations.play('sword_swing', 12, false);
+                        }catch(e){
+                            console.log("attacker has no animation '" + 'sword_swing' + "'");
+                        }
 
 
-                    var probability_to_hit = parseInt(this.game.globals.calculateHitProbability(attacker, defender));
-                    var message = '';
+                        this.game.time.events.add(Phaser.Timer.SECOND, (function() {
+                            defender_anim.start();
+                            this.showActorMessage(defender, message);
+                        }), this).autoDestroy = true;
 
-                    var damage = this.game.globals.calculateWeaponDamage(attacker, defender, this.moves_this_turn[action]);
-                    if(probability_to_hit < 0){
-                        //means the defender has higher stats for luck
-                        message = "DODGE!";
-                        defender_anim.to({x: defender.x + defender.width}, 500, "Quart.easeOut", false);
-                        defender_anim.to({x: defenderOriginX}, 500, "Quart.easeOut", false);
 
 
                     }
-                    if(probability_to_hit == 0){
-                        message = "MISS!";
-                    }
-                    if(probability_to_hit > 0){
-                        message = "HIT! " + damage;
-                        defender.attributes.currentHP -= damage;
-                        defender_anim.to({ alpha: 1 }, 1, Phaser.Easing.Cubic.In);
-                        defender_anim.to({ alpha: 0 }, 100, Phaser.Easing.Cubic.In);
-                        defender_anim.to({ alpha: 1 }, 1, Phaser.Easing.Cubic.In);
-                        defender_anim.to({ alpha: 0 }, 100, Phaser.Easing.Cubic.In);
-                        defender_anim.to({ alpha: 1 }, 1, Phaser.Easing.Cubic.In);
-                    }
-
-                    attacker_anim.to({x: attackerOriginX}, 100, "Quart.easeOut", false);
-
-                    attacker_anim.start();
-                    defender_anim.start();
-                    this.showActorMessage(defender, message);
-
-
-
                 }
+
+
             }
 
 
 
 
+        console.log("Player HP: " + this.player.attributes.currentHP);
+        console.log("Enemy HP: " + this.enemy.attributes.currentHP);
 
 
+    },
+    tweenComplete: function (attacker, originX, actors) {
+        this.performing = false;
+        this.player.animations.play("right");
         this.round_ready = false;
         this.moves_this_turn = [];
 
-        //console.log("Player HP: " + this.player.attributes.currentHP);
-        //console.log("Enemy HP: " + this.enemy.attributes.currentHP);
-
-        //
-        //this.player_health.crop.width = (this.player.attributes.currentHP / this.player.attributes.HP) * this.player_health.width;
-        //this.player_health.updateCrop();
-        //this.enemy_health.crop.width = (this.enemy.attributes.currentHP / this.enemy.attributes.HP) * this.enemy_health.width;
-        //this.enemy_health.updateCrop();
-    },
-    tweenComplete: function (attacker, originX, actors) {
-        var that = this;
-        console.log("running second attack");
+        var shifted = this.actors.shift();
+        this.actors.push(shifted);
+        console.log(this.actors);
 
     },
     create: function () {
@@ -251,15 +276,42 @@ Olympus.Battle.prototype = {
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
     },
+    updateHealth: function (health) {
+        health.context.clearRect(0, 0, health.width, health.height);
 
+        // some simple colour changing to make it look like a health bar
+        if (health.barProgress < 32) {
+            health.context.fillStyle = '#f00';
+        }
+        else if (health.barProgress < 64) {
+            health.context.fillStyle = '#ff0';
+        }
+        else {
+            health.context.fillStyle = '#0f0';
+        }
+
+        // draw the bar
+        health.context.fillRect(0, 0, health.barProgress, 8);
+
+        // important - without this line, the context will never be updated on the GPU when using webGL
+        health.dirty = true;
+
+        return health;
+    },
     update: function () {
 
-        var actors = [this.player, this.enemy];
 
+        this.enemy.health = this.updateHealth(this.enemy.health);
+        this.player.health = this.updateHealth(this.player.health);
 
+        if(this.actors[0] != this.player && this.round_ready == false){
+            console.log("setting enemy choice);");
+            this.enemyMoveChoice(this.enemy);
+        }
 
         if (this.round_ready == true) {
-                this.performAction(actors);
+                this.performAction(this.actors);
+
         }
         if (this.cursors.up.isDown) {
             this.game.stateTransition.to('Game', true, false);

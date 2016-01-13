@@ -48,8 +48,11 @@ Olympus.Boot.prototype = {
 
         this.game.load.image('button', 'assets/images/hero_menu/button.png');
 
+        this.game.load.image('menu_sword', 'assets/images/hero_menu/sword.png');
+
         this.game.load.spritesheet('hero', 'assets/images/hero_spritesheet.png', 199, 285);
-        this.game.load.spritesheet('enemy', 'assets/images/villain_spritesheet.png', 199, 285);
+
+        this.game.load.spritesheet('enemy', 'assets/images/villain_spritesheet.png', 398, 566);
 
 
         //this.game.load.tilemap('game-world', 'assets/map/world_map.json', null, Phaser.Tilemap.TILED_JSON);
