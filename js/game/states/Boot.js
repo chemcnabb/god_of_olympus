@@ -92,5 +92,8 @@ Olympus.Boot.prototype = {
         //this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         this.state.start('Preload');
-    }
+    }, shutdown:function(){
+        //this.game.stateTransition.destroy();
+        //this.game.globals.destroy();
+    },
 };

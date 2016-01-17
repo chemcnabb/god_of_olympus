@@ -62,6 +62,7 @@ Phaser.Tilemap.prototype.setCollisionBetween = function (start, stop, collides, 
 var LabelButton = function(menu_key, game, x, y, key, label, callback,
                            callbackContext, overFrame, outFrame, downFrame, upFrame)
 {
+    this.game = game;
     Phaser.Button.call(this, game, x, y, key, callback,
         callbackContext, overFrame, outFrame, downFrame, upFrame);
 

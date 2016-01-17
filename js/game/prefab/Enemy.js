@@ -2,9 +2,9 @@
 Enemy = function (game, x, y, key) {
     Actor.call(this, game, x, y, key);
     this.attributes = Olympus.Globals.attributes;
-
+    this.anim = this.game.add.tween(this);
     this.hitArea = new Phaser.Rectangle(0, 0, 20, 20);
-
+    this.battleRest = "left";
 
 };
 
@@ -15,6 +15,9 @@ Enemy.prototype.enablePhysics = function(){
     this.body.fixedRotation = true; // no rotation
     this.body.setRectangle(this.width-8, 15, 0, (this.height/2)-7.5);
 }
+
+
+
 Enemy.prototype.move = function () {
 
     //this.is_moving = false;

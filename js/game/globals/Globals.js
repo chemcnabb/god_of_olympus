@@ -1,5 +1,12 @@
 var Olympus = Olympus || {};
+
+
+
 Olympus.Globals = function(){
+    this.actors = [];
+    this.player_round = false;
+    this.performing = false;
+    this.roundReady = false;
     this.terrain = "";
     this.actorlocations = {};
     this.playerX = 200;
@@ -70,10 +77,10 @@ Olympus.Globals.prototype = {
     },
     calculateWeaponDamage: function(attacker, defender, weapon){
         console.log("calculate weapon damage");
-        attack = attacker.attributes.ATK + this.randRange(attacker.weapons.weapons[weapon].minAtk,
-                attacker.weapons.weapons[weapon].maxAtk);
-        defend = defender.attributes.DEF + this.randRange(defender.weapons.weapons[weapon].minDef,
-                defender.weapons.weapons[weapon].maxDef);
+        attack = attacker.attributes.ATK + this.randRange(attacker.weapons.weapon[weapon].minAtk,
+                attacker.weapons.weapon[weapon].maxAtk);
+        defend = defender.attributes.DEF + this.randRange(defender.weapons.weapon[weapon].minDef,
+                defender.weapons.weapon[weapon].maxDef);
 
         var damage = parseInt(Math.ceil(attack - defend));
         if (damage<=0){
@@ -83,8 +90,8 @@ Olympus.Globals.prototype = {
         return damage;
     },
     magicalDamage: function(attacker, defender){
-        return Math.ceil((attacker.attributes.INT + this.randRange(attacker.weapons.weapons.minMag,
-                attacker.weapons.weapons.maxMag)) - defender.attributes.RES);
+        return Math.ceil((attacker.attributes.INT + this.randRange(attacker.weapons.weapon.minMag,
+                attacker.weapons.weapon.maxMag)) - defender.attributes.RES);
     },
     calculateHitProbability : function(attacker, defender){
         //console.log(attacker);
@@ -119,3 +126,38 @@ Olympus.Globals.prototype = {
 
 };
 
+Olympus.Universe = function
+(
+    name,
+    actionDefns,
+    agentDefns,
+    effectDefns,
+    encounterDefns,
+    itemDefns,
+    encounter
+)
+{
+    this.name = name;
+    this.actionDefns = actionDefns;
+    this.agentDefns = agentDefns;
+    this.effectDefns = effectDefns;
+    this.encounterDefns = encounterDefns;
+    this.itemDefns = itemDefns;
+    this.encounter = encounter;
+
+    this.agentDefns.addLookups("name");
+    this.effectDefns.addLookups("name");
+    this.encounterDefns.addLookups("name");
+    this.itemDefns.addLookups("name");
+}
+{
+    Olympus.Universe.prototype.initialize = function()
+    {
+        this.encounter.initialize();
+    }
+
+    Olympus.Universe.prototype.updateForTimerTick = function()
+    {
+        this.encounter.updateForTimerTick();
+    }
+}

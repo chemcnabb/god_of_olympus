@@ -3,8 +3,8 @@ Hero = function (game, x, y) {
 
     Actor.call(this, game, x, y, 'hero');
     this.animations.add('sword_swing', [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], 30, true);
-
-
+    this.anim = this.game.add.tween(this);
+    this.battleRest = "right";
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
 };
