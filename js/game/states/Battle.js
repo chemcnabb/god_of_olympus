@@ -111,10 +111,7 @@ Olympus.Battle.prototype = {
         height = Math.floor((window.innerHeight / 2) / 100) * 100;
 
         this.bg = this.game.add.sprite(0, 0, "battle-grass");
-        //this.bg.anchor.setTo(0.5, 0.5);
 
-        //this.bg.scale.x = 6;
-        //this.bg.scale.y = 6;
 
         this.bg.bringToTop();
     },
@@ -124,12 +121,7 @@ Olympus.Battle.prototype = {
     getCircularY: function (y, radius, index, menu_items) {
         return y + radius * Math.sin(2 * Math.PI * index / menu_items.length);
     },
-    menuClick: function () {
-        console.log("MENU CLICK");
 
-        console.log(this);
-        //this.playerMenu.destroy();
-    },
 
     buttonClick: function () {
 
@@ -173,6 +165,15 @@ Olympus.Battle.prototype = {
 
                 button.selectedAction = this.menu_items[i];
 
+
+                button.onInputOver.add(function(){
+                    this.scale.setTo(1.25);
+                }, button);
+
+                button.onInputOut.add(function(){
+                    this.scale.setTo(1);
+                }, button);
+
                 button.onInputDown.add(this.buttonClick, button);
 
                 hero.currentWeapon = this.menu_items[i];
@@ -189,21 +190,6 @@ Olympus.Battle.prototype = {
 
     },
 
-    performAction: function () {
-
-        var defender = this.game.globals.actors[1];
-        var attacker = this.game.globals.actors[0];
-
-
-
-        if(attacker.currentWeapon){
-
-            attacker.weapons.weapon[attacker.currentWeapon].performAction(this.game, attacker, defender);
-
-        }
-
-
-    },
 
     create: function () {
 
@@ -229,7 +215,16 @@ Olympus.Battle.prototype = {
             this.game.globals.roundReady = false;
 
 
-            this.performAction();
+            var defender = this.game.globals.actors[1];
+            var attacker = this.game.globals.actors[0];
+
+
+
+            if(attacker.currentWeapon){
+
+                attacker.weapons.weapon[attacker.currentWeapon].performAction(this.game, attacker, defender);
+
+            }
 
         }
 
