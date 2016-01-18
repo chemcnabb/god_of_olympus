@@ -46,6 +46,7 @@ Olympus.Battle.prototype = {
         this.enemy.originY = this.enemy.y;
 
         this.enemy.addHealthBar(this, 10 + this.game.width - 128, 10);
+        this.enemy.updateHealth();
 
         var currentenemy = 0;
 
@@ -83,6 +84,8 @@ Olympus.Battle.prototype = {
         this.player.originY = this.player.y;
 
         this.player.addHealthBar(this, 10, 10);
+
+        this.player.updateHealth();
 
         this.player.attributes = this.player.attributes || new Olympus.ActorAttributes();
 
@@ -146,7 +149,7 @@ Olympus.Battle.prototype = {
 
 
 
-        if(this.menu_open == false) {
+        if(this.menu_open == false && this.game.globals.performing == false) {
 
             this.menu_open = true;
 
@@ -190,7 +193,7 @@ Olympus.Battle.prototype = {
 
         var defender = this.game.globals.actors[1];
         var attacker = this.game.globals.actors[0];
-        //console.log(attacker.anim);
+
 
 
         if(attacker.currentWeapon){
@@ -210,15 +213,16 @@ Olympus.Battle.prototype = {
         this.cursors = this.game.input.keyboard.createCursorKeys();
     },
 
-    update: function () {
+    checkRoundReady: function () {
 
-        this.enemy.updateHealth();
-
-        this.player.updateHealth();
-
-        if(this.game.globals.actors[0].currentWeapon && this.menu_open == false){
+        if (this.game.globals.actors[0].currentWeapon && this.menu_open == false) {
             this.game.globals.roundReady = true;
         }
+    }, update: function () {
+
+
+
+        this.checkRoundReady();
 
         if(this.game.globals.roundReady == true){
 

@@ -17,9 +17,8 @@ var Actor = function(game, x, y, sprite) {
     this.animations.add('down', [0], 1, true);
     this.alive = true;
 
+    this.battleRest = "";
 
-    this.battleX = 200;
-    this.battleY = 200;
     this.battleDirection = "right";
 
 
@@ -43,6 +42,82 @@ Actor.prototype.addHealthBar = function (that, barX, barY) {
     that.game.add.sprite(barX, barY, this.healthbar);
 
     this.healthbar.barProgress = 128;
+
+
+};
+
+Actor.prototype.performHit = function(damage){
+    this.game.add.tween(this.healthbar.barProgress).to({
+            barProgress: this.healthbar.barProgress -= damage},
+        1000,
+        null,
+        true).onComplete.add(function(){this.updateHealth()}, this).autoDestroy = true;
+
+};
+
+Actor.prototype.performFlash = function(){
+    this.anim.to({alpha: 1}, 1, Phaser.Easing.Cubic.In).autoDestroy = true;
+    this.anim.to({alpha: 0}, 100, Phaser.Easing.Cubic.In).autoDestroy = true;
+    this.anim.to({alpha: 1}, 1, Phaser.Easing.Cubic.In).autoDestroy = true;
+    this.anim.to({alpha: 0}, 100, Phaser.Easing.Cubic.In).autoDestroy = true;
+    this.anim.to({alpha: 1}, 1, Phaser.Easing.Cubic.In).autoDestroy = true;
+    console.log(this.alpha);
+};
+
+Actor.prototype.performDodge = function(){
+    var dodgeX = 0;
+    if(this.game.globals.actors[0].key == "hero"){
+        dodgeX = this.x + this.width/2
+    }else{
+        dodgeX = this.x - this.width/2;
+    }
+    this.anim.to({x: dodgeX}, 500, "Quart.easeOut", false).autoDestroy = true;
+    this.anim.to({x: this.originX}, 500, "Quart.easeOut", false).autoDestroy = true;
+};
+
+Actor.prototype.performAttack = function(target){
+    var targetX = 0;
+    if(this.game.globals.actors[0].key == "hero"){
+        targetX = target.x - this.width/2;
+    }else{
+        targetX = target.x + this.width/2
+
+    }
+    this.anim.to({x: targetX}, 1000, Phaser.Easing.Linear.None, false).autoDestroy = true;
+};
+
+Actor.prototype.endAttack = function(){
+    this.anim.to({
+            x: this.originX},
+        120,
+        "Quart.easeOut",
+        false).onComplete.add(this.attackComplete, this);
+};
+
+Actor.prototype.attackComplete = function(){
+
+
+        this.resetAnim();
+
+        this.game.globals.performing = false;
+
+        this.animations.play(this.battleRest);
+
+
+
+
+        this.game.globals.actors.push(this.game.globals.actors.shift());
+
+        if(this.game.globals.actors[0].key == "hero"){
+            this.game.globals.player_round = true;
+        }else{
+            this.game.state.states.Battle.enemy.currentWeapon = "Sword";
+            this.game.globals.player_round = false;
+        }
+
+        console.log("tween complete");
+
+
 
 
 };
@@ -87,31 +162,12 @@ Actor.prototype.updateHealth = function () {
     this.healthbar.dirty = true;
 
 
+
+
 };
 
 Actor.prototype.update = function(){
-    //this.body.velocity.y = 0;
-    //this.body.velocity.x = 0;
-    //this.animations.play(this.direction);
-//    if(this.alive && this.is_moving == true) {
-//        //player movement
-//
-//
-//        if(this.direction == "up") {
-//            this.body.velocity.y -= 75;
-//            //this.scale.setTo(this.y*0.0012)
-//        }
-//        if(this.direction == "down") {
-//            this.body.velocity.y += 75;
-//            //this.scale.setTo(this.y*0.0012);
-//        }
-//        if(this.direction == "left") {
-//            this.body.velocity.x -= 125;
-//        }
-//        if(this.direction == "right") {
-//            this.body.velocity.x += 125;
-//        }
-//
-//}
+    this.updateHealth();
+
 };
 
