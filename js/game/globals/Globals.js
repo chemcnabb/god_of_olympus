@@ -53,13 +53,13 @@ Olympus.Globals = function(){
             maxAtk: 7,//Weapon’s highest attack,
             minDef:0,
             maxDef: 6,
-            StatsMod:3 ,//Stats of player character that this weapon modifies. Not all weapons have this stat so this may empty.
+            StatsMod:3 ,//Stats of player character that this item modifies. Not all items have this stat so this may empty.
             Element: 3,//Weapon’s element, this may empty.
         }
     }
 
     this.armor_attributes = {
-        StatsMod:3 ,//Stats of player character that this weapon modifies. Not all weapons have this stat so this may empty.
+        StatsMod:3 ,//Stats of player character that this item modifies. Not all items have this stat so this may empty.
         Element: 3,//Weapon’s element, this may empty.
 
     };
@@ -76,11 +76,11 @@ Olympus.Globals.prototype = {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     calculateWeaponDamage: function(attacker, defender, weapon){
-        console.log("calculate weapon damage");
-        attack = attacker.attributes.ATK + this.randRange(attacker.weapons.weapon[weapon].minAtk,
-                attacker.weapons.weapon[weapon].maxAtk);
-        defend = defender.attributes.DEF + this.randRange(defender.weapons.weapon[weapon].minDef,
-                defender.weapons.weapon[weapon].maxDef);
+        console.log("calculate item damage");
+        attack = attacker.attributes.ATK + this.randRange(attacker.items.item[weapon].minAtk,
+                attacker.items.item[weapon].maxAtk);
+        defend = defender.attributes.DEF + this.randRange(defender.items.item[weapon].minDef,
+                defender.items.item[weapon].maxDef);
 
         var damage = parseInt(Math.ceil(attack - defend));
         if (damage<=0){
@@ -90,8 +90,8 @@ Olympus.Globals.prototype = {
         return damage;
     },
     magicalDamage: function(attacker, defender){
-        return Math.ceil((attacker.attributes.INT + this.randRange(attacker.weapons.weapon.minMag,
-                attacker.weapons.weapon.maxMag)) - defender.attributes.RES);
+        return Math.ceil((attacker.attributes.INT + this.randRange(attacker.items.item.minMag,
+                attacker.items.item.maxMag)) - defender.attributes.RES);
     },
     calculateHitProbability : function(attacker, defender){
         //console.log(attacker);

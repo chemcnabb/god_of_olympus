@@ -4,9 +4,9 @@ Olympus.Battle = function (game) {
     //this.moves_this_turn = [];
 
     this.active_player = null;
-    this.menu_items = ['Power', 'Examine', 'Bow', 'Abilities', 'Magic', 'Sword'];
+
     this.safetyOffset = 100;
-    this.menu_open = false;
+
 };
 
 Olympus.Battle.prototype = {
@@ -59,7 +59,7 @@ Olympus.Battle.prototype = {
 
         this.enemy.attributes = this.enemy.attributes || new Olympus.ActorAttributes();
 
-        this.enemy.weapons = this.enemy.weapons || new Olympus.Weapons();
+        this.enemy.items = this.enemy.items || new Olympus.Items();
 
         this.enemy.armor = this.enemy.armor || new Olympus.Armor();
 
@@ -89,7 +89,7 @@ Olympus.Battle.prototype = {
 
         this.player.attributes = this.player.attributes || new Olympus.ActorAttributes();
 
-        this.player.weapons = this.player.weapons || new Olympus.Weapons();
+        this.player.items = this.player.items || new Olympus.Items();
 
         this.player.armor = this.player.armor || new Olympus.Armor();
 
@@ -97,7 +97,7 @@ Olympus.Battle.prototype = {
 
         this.player.inputEnabled = true;
 
-        this.player.events.onInputDown.add(this.showMenu, this);
+        this.player.events.onInputDown.add(this.player.showMenu, this.player);
 
         this.game.add.existing(this.player);
 
@@ -115,80 +115,8 @@ Olympus.Battle.prototype = {
 
         this.bg.bringToTop();
     },
-    getCircularX: function (x, radius, index, menu_items) {
-        return x + radius * Math.cos(2 * Math.PI * index / menu_items.length);
-    },
-    getCircularY: function (y, radius, index, menu_items) {
-        return y + radius * Math.sin(2 * Math.PI * index / menu_items.length);
-    },
 
 
-    buttonClick: function () {
-
-
-
-        this.game.state.states.Battle.menu_open = false;
-
-
-
-        this.game.state.states.Battle.playerMenu.destroy();
-
-
-        //this.destroy();
-
-    },
-    showMenu: function (hero) {
-
-
-
-        if(this.menu_open == false && this.game.globals.performing == false) {
-
-            this.menu_open = true;
-
-            this.playerMenu = this.game.add.group();
-
-            this.game.world.bringToTop(this.playerMenu);
-
-            var innerCircleRadius = 140;
-
-            for (var i = 0; i < this.menu_items.length; i++) {
-
-                var chairOriginX = this.getCircularX(hero.originX, innerCircleRadius, i, this.menu_items);
-
-                var chairOriginY = this.getCircularY(hero.originY, innerCircleRadius, i, this.menu_items);
-
-                var chairWidth = 69;
-
-                var button = new LabelButton("menu_" + this.menu_items[i].toLowerCase(), this.game, hero.originX, hero.originY, "button", this.menu_items[i]);
-
-                button.alpha = 0;
-
-                button.selectedAction = this.menu_items[i];
-
-
-                button.onInputOver.add(function(){
-                    this.scale.setTo(1.25);
-                }, button);
-
-                button.onInputOut.add(function(){
-                    this.scale.setTo(1);
-                }, button);
-
-                button.onInputDown.add(this.buttonClick, button);
-
-                hero.currentWeapon = this.menu_items[i];
-
-                this.game.add.tween(button).to({
-                    x: chairOriginX,
-                    y: chairOriginY,
-                    alpha: 1
-                }, 500, Phaser.Easing.Circular.InOut, true).autoDestroy = true;
-
-                this.playerMenu.add(button);
-            }
-        }
-
-    },
 
 
     create: function () {
@@ -201,7 +129,7 @@ Olympus.Battle.prototype = {
 
     checkRoundReady: function () {
 
-        if (this.game.globals.actors[0].currentWeapon && this.menu_open == false) {
+        if (this.game.globals.actors[0].currentWeapon && this.player.menu_open == false) {
             this.game.globals.roundReady = true;
         }
     }, update: function () {
@@ -222,7 +150,7 @@ Olympus.Battle.prototype = {
 
             if(attacker.currentWeapon){
 
-                attacker.weapons.weapon[attacker.currentWeapon].performAction(this.game, attacker, defender);
+                attacker.items.item[attacker.currentWeapon].performAction(this.game, attacker, defender);
 
             }
 

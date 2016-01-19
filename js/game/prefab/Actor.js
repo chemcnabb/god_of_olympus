@@ -2,7 +2,6 @@ var Actor = function(game, x, y, sprite) {
     // The super call to Phaser.Sprite
     this.game = game;
     this.direction = "down";
-    this.is_moving = false;
     Phaser.Sprite.call(this, game, x, y, sprite);
     this.originX = null;
     this.originY = null;
@@ -16,21 +15,87 @@ var Actor = function(game, x, y, sprite) {
     this.animations.add('up', [3], 1, true);
     this.animations.add('down', [0], 1, true);
     this.alive = true;
-
+    this.message = "";
     this.battleRest = "";
-
-    this.battleDirection = "right";
-
-
-
-
-
-
-
+    this.menu_open = false;
+    this.selectedAction = "";
+    this.menu_items = ['Power', 'Examine', 'Bow', 'Abilities', 'Magic', 'Sword'];
 
 };
 
 Actor.prototype = Object.create(Phaser.Sprite.prototype);
+
+Actor.prototype.getCircularX = function (x, radius, index, menu_items) {
+    return x + radius * Math.cos(2 * Math.PI * index / menu_items.length);
+};
+Actor.prototype.getCircularY = function (y, radius, index, menu_items) {
+    return y + radius * Math.sin(2 * Math.PI * index / menu_items.length);
+};
+
+
+Actor.prototype.buttonClick = function () {
+    console.log(this.items.item[this.selectedAction]);
+    this.menu_open = false;
+    this.currentWeapon = this.selectedAction;
+    this.selectedAction = "";
+    this.playerMenu.destroy();
+
+};
+
+Actor.prototype.showMenu = function () {
+
+    if(this.menu_open == false && this.game.globals.performing == false) {
+
+        this.menu_open = true;
+
+        this.playerMenu = this.game.add.group();
+
+        this.game.world.bringToTop(this.playerMenu);
+
+        var innerCircleRadius = 140;
+
+        for (var i = 0; i < this.menu_items.length; i++) {
+
+            var chairOriginX = this.getCircularX(this.originX+this.width/2, innerCircleRadius, i, this.menu_items);
+
+            var chairOriginY = this.getCircularY(this.originY-this.height/2, innerCircleRadius, i, this.menu_items);
+
+            var chairWidth = 69;
+
+            var button = new LabelButton("menu_" + this.menu_items[i].toLowerCase(), this.game, this.originX, this.originY, "button", this.menu_items[i]);
+
+            button.alpha = 0;
+
+            this.selectedAction = this.menu_items[i];
+
+
+            button.onInputOver.add(function(){
+                this.scale.setTo(1.25);
+            }, button);
+
+            button.onInputOut.add(function(){
+                this.scale.setTo(1);
+            }, button);
+
+            button.onInputDown.add(this.buttonClick, this);
+
+
+
+            this.game.add.tween(button).to({
+                x: chairOriginX,
+                y: chairOriginY,
+                alpha: 1
+            }, 500, Phaser.Easing.Circular.InOut, true).autoDestroy = true;
+
+            this.playerMenu.add(button);
+
+        }
+
+    }
+
+};
+
+
 Actor.prototype.resetAnim = function(){
     this.game.tweens.remove(this.anim);
     this.anim = this.game.add.tween(this);
@@ -84,6 +149,8 @@ Actor.prototype.performAttack = function(target){
 
     }
     this.anim.to({x: targetX}, 1000, Phaser.Easing.Linear.None, false).autoDestroy = true;
+
+
 };
 
 Actor.prototype.endAttack = function(){
@@ -120,6 +187,22 @@ Actor.prototype.attackComplete = function(){
 
 
 
+};
+
+Actor.prototype.runDefensiveAnimation = function(){
+    this.game.time.events.add(Phaser.Timer.SECOND, (function() {
+        this.anim.start();
+        this.showMessage(this.message);
+    }), this).autoDestroy = true;
+}
+
+Actor.prototype.runOffensiveAnimation = function(){
+    this.anim.start();
+    try{
+        this.animations.play('sword_swing', 12, false);
+    }catch(e){
+        console.log("this.attacker has no animation '" + 'sword_swing' + "'");
+    }
 };
 
 Actor.prototype.showMessage = function (message) {

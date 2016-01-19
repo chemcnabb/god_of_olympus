@@ -63,7 +63,7 @@ Olympus.Game.prototype = {
         enemy = this.game.globals.setPlayerProperties(enemy, index);
 
         enemy.attributes = enemy.attributes || new Olympus.ActorAttributes();
-        enemy.weapons =  enemy.weapons || new Olympus.Weapons();
+        enemy.items =  enemy.items || new Olympus.Items();
         enemy.armor = enemy.armor || new Olympus.Armor();
 
         enemy.body.fixedRotation = true; // no rotation
