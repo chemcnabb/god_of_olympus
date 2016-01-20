@@ -33,16 +33,27 @@ Actor.prototype.getCircularY = function (y, radius, index, menu_items) {
 };
 
 
-Actor.prototype.buttonClick = function () {
-    console.log(this.items.item[this.selectedAction]);
-    this.menu_open = false;
-    this.currentWeapon = this.selectedAction;
-    this.selectedAction = "";
-    this.playerMenu.destroy();
+Actor.prototype.buttonClick = function (menu, button) {
+
+
+    if(menu.performAction == undefined){
+        this.playerMenu.destroy();
+        this.menu_open = false;
+        this.showMenu(menu);
+    }else{
+        this.menu_open = false;
+        this.currentWeapon = button.selectedAction;
+        this.attackChoice = menu;
+        this.selectedAction = "";
+        this.playerMenu.destroy();
+    }
+
+
 
 };
 
-Actor.prototype.showMenu = function () {
+
+Actor.prototype.showMenu = function (menu) {
 
     if(this.menu_open == false && this.game.globals.performing == false) {
 
@@ -54,19 +65,24 @@ Actor.prototype.showMenu = function () {
 
         var innerCircleRadius = 140;
 
-        for (var i = 0; i < this.menu_items.length; i++) {
+        //for (var i = 0; i < this.menu_items.length; i++) {
+        //for (var i = 0; i < Object.keys(this.items.item).length; i++) {
+        var count = 0;
+        for (var attack_type in menu) {
 
-            var chairOriginX = this.getCircularX(this.originX+this.width/2, innerCircleRadius, i, this.menu_items);
 
-            var chairOriginY = this.getCircularY(this.originY-this.height/2, innerCircleRadius, i, this.menu_items);
+
+            var chairOriginX = this.getCircularX(this.originX+this.width/2, innerCircleRadius, count, attack_type);
+
+            var chairOriginY = this.getCircularY(this.originY-this.height/2, innerCircleRadius, count, attack_type);
 
             var chairWidth = 69;
 
-            var button = new LabelButton("menu_" + this.menu_items[i].toLowerCase(), this.game, this.originX, this.originY, "button", this.menu_items[i]);
+            var button = new LabelButton("menu_" + attack_type.toLowerCase(), this.game, this.originX, this.originY, "button", attack_type);
 
             button.alpha = 0;
 
-            this.selectedAction = this.menu_items[i];
+            button.selectedAction = attack_type;
 
 
             button.onInputOver.add(function(){
@@ -78,16 +94,19 @@ Actor.prototype.showMenu = function () {
             }, button);
 
             button.onInputDown.add(function(){
+                console.log(this.label._text);
                 this.scale.setTo(.95);
             }, button);
 
             var that = this;
+            //console.log(attack_type);
+            //console.log(menu[attack_type]);
             button.onInputUp.add(function(){
 
                 this.scale.setTo(1);
                 this.game.time.events.add(50, (function() {
-                    that.buttonClick();
-                }), that).autoDestroy = true;
+                    that.buttonClick(menu[this.selectedAction], this);
+                }), this).autoDestroy = true;
 
             }, button);
 
@@ -102,6 +121,8 @@ Actor.prototype.showMenu = function () {
             }, 500, Phaser.Easing.Circular.InOut, true).autoDestroy = true;
 
             this.playerMenu.add(button);
+
+            count+= 1;
 
         }
 
@@ -208,7 +229,7 @@ Actor.prototype.runDefensiveAnimation = function(){
         this.anim.start();
         this.showMessage(this.message);
     }), this).autoDestroy = true;
-}
+};
 
 Actor.prototype.runOffensiveAnimation = function(){
     this.anim.start();
@@ -257,9 +278,6 @@ Actor.prototype.updateHealth = function () {
 
     // important - without this line, the context will never be updated on the GPU when using webGL
     this.healthbar.dirty = true;
-
-
-
 
 };
 

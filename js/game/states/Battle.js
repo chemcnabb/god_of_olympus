@@ -39,7 +39,7 @@ Olympus.Battle.prototype = {
 
         this.enemy.x = this.enemy.x - this.enemy.width;
 
-        this.enemy.currentWeapon = "Sword";
+
 
         this.enemy.originX = this.enemy.x;
 
@@ -62,6 +62,8 @@ Olympus.Battle.prototype = {
         this.enemy.items = this.enemy.items || new Olympus.Items();
 
         this.enemy.armor = this.enemy.armor || new Olympus.Armor();
+
+        this.enemy.attackChoice = this.enemy.items.item["Melee"]["Sword"]["Swing"];
 
         this.enemy.direction = "left";
 
@@ -97,7 +99,9 @@ Olympus.Battle.prototype = {
 
         this.player.inputEnabled = true;
 
-        this.player.events.onInputDown.add(this.player.showMenu, this.player);
+        this.player.events.onInputDown.add(function(){
+            this.player.showMenu(this.player.items.item);
+        }, this);
 
         this.game.add.existing(this.player);
 
@@ -150,7 +154,8 @@ Olympus.Battle.prototype = {
 
             if(attacker.currentWeapon){
 
-                attacker.items.item["Melee"][attacker.currentWeapon]["Swing"].performAction(this.game, attacker, defender);
+                attacker.attackChoice.performAction(this.game, attacker, defender);
+                //attacker.items.item["Melee"][attacker.currentWeapon]["Swing"].performAction(this.game, attacker, defender);
 
             }
 

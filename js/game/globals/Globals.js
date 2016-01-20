@@ -79,12 +79,13 @@ Olympus.Globals.prototype = {
         // TODO: make action selectable
         var category = "Melee";
         var move = "Swing";
-        console.log(defender.items.item[category][weapon][move].minDef);
+        //console.log(defender.items.item[category][weapon][move].minDef);
         console.log("calculate item damage");
-        attack = attacker.attributes.ATK + this.randRange(attacker.items.item[category][weapon][move].minAtk,
-                attacker.items.item[category][weapon][move].maxAtk);
-        defend = defender.attributes.DEF + this.randRange(defender.items.item[category][weapon][move].minDef,
-                defender.items.item[category][weapon][move].maxDef);
+        attack = attacker.attributes.ATK + this.randRange(attacker.attackChoice.minAtk,
+                attacker.attackChoice.maxAtk);
+
+        defend = defender.attributes.DEF + this.randRange(defender.attackChoice.minDef,
+                defender.attackChoice.maxDef);
 
         var damage = parseInt(Math.ceil(attack - defend));
         if (damage<=0){

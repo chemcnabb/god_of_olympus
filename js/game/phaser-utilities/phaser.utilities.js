@@ -68,18 +68,18 @@ var LabelButton = function(menu_key, game, x, y, key, label, callback,
 
     //Style how you wish...
     this.style = {
-        'font': '10px Arial',
+        'font': '12px Arial',
         'fill': 'black'
     };
     this.anchor.setTo( 0.5, 0.5 );
-    //this.label = new Phaser.Text(game, 0, 0, label, this.style);
-    this.label = this.game.add.sprite(0, 0, menu_key);
-    console.log(menu_key);
+    this.label = new Phaser.Text(game, 0, 0, label, this.style);
+    //this.label = this.game.add.sprite(0, 0, menu_key);
+
     //puts the label in the center of the button
     this.label.anchor.setTo( 0.5, 0.5 );
 
     this.addChild(this.label);
-    //this.setLabel( label );
+    this.setLabel( label );
 
     //adds button to game
     game.add.existing( this );
