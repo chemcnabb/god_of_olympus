@@ -19,7 +19,7 @@ var Actor = function(game, x, y, sprite) {
     this.battleRest = "";
     this.menu_open = false;
     this.selectedAction = "";
-    this.menu_items = ['Power', 'Examine', 'Bow', 'Abilities', 'Magic', 'Sword'];
+    this.menu_items = ['Magic', 'Sword'];
 
 };
 
@@ -77,7 +77,21 @@ Actor.prototype.showMenu = function () {
                 this.scale.setTo(1);
             }, button);
 
-            button.onInputDown.add(this.buttonClick, this);
+            button.onInputDown.add(function(){
+                this.scale.setTo(.95);
+            }, button);
+
+            var that = this;
+            button.onInputUp.add(function(){
+
+                this.scale.setTo(1);
+                this.game.time.events.add(50, (function() {
+                    that.buttonClick();
+                }), that).autoDestroy = true;
+
+            }, button);
+
+
 
 
 
@@ -126,7 +140,7 @@ Actor.prototype.performFlash = function(){
     this.anim.to({alpha: 1}, 1, Phaser.Easing.Cubic.In).autoDestroy = true;
     this.anim.to({alpha: 0}, 100, Phaser.Easing.Cubic.In).autoDestroy = true;
     this.anim.to({alpha: 1}, 1, Phaser.Easing.Cubic.In).autoDestroy = true;
-    console.log(this.alpha);
+
 };
 
 Actor.prototype.performDodge = function(){

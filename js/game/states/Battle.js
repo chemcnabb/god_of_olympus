@@ -150,7 +150,7 @@ Olympus.Battle.prototype = {
 
             if(attacker.currentWeapon){
 
-                attacker.items.item[attacker.currentWeapon].performAction(this.game, attacker, defender);
+                attacker.items.item["Melee"][attacker.currentWeapon]["Swing"].performAction(this.game, attacker, defender);
 
             }
 
