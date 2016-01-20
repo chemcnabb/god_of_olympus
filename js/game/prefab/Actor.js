@@ -128,6 +128,12 @@ Actor.prototype.showMenu = function (menu) {
 
     }
 
+    this.events.onInputDown.add(function(){
+        this.playerMenu.destroy();
+        this.menu_open = false;
+        this.showMenu(this.items.item);
+    }, this);
+
 };
 
 
